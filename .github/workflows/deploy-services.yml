@@ -1,0 +1,34 @@
+name: Deploy Services (VPS)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/**"
+      - "apps/projects/honeypot/**"
+      - "apps/projects/cis-auditor/**"
+      - "apps/projects/waf/**"
+      - "apps/projects/ids/**"
+      - "apps/projects/sql-injection-scanner/**"
+      - "apps/projects/owasp-scanner/**"
+
+jobs:
+  deploy:
+    name: Deploy via Kamal
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - run: gem install kamal
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+      - run: kamal deploy
+        env:
+          KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
