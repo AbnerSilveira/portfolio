@@ -1,34 +1,24 @@
-name: Deploy Services (VPS)
+name: Deploy Services (Fly.io)
 
 on:
   push:
     branches: [main]
     paths:
-      - "services/**"
-      - "apps/projects/honeypot/**"
-      - "apps/projects/cis-auditor/**"
-      - "apps/projects/waf/**"
-      - "apps/projects/ids/**"
-      - "apps/projects/sql-injection-scanner/**"
-      - "apps/projects/owasp-scanner/**"
+      - "services/sandbox-runner/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
 
 jobs:
-  deploy:
-    name: Deploy via Kamal
+  deploy-sandbox-runner:
+    name: Deploy sandbox-runner to Fly.io
     runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-sandbox-runner
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.3"
-          bundler-cache: true
-      - run: gem install kamal
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
-      - run: kamal deploy
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        working-directory: services/sandbox-runner
         env:
-          KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
