@@ -36,8 +36,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -51,8 +49,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -80,8 +76,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -97,8 +91,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -106,6 +98,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 ```
+
+> **Nota (pnpm):** se o `package.json` raiz tiver `packageManager: pnpm@…`, **não** passe `version:` no `pnpm/action-setup@v4` — senão o Action falha com “Multiple versions of pnpm specified”.
 
 ---
 
@@ -202,8 +196,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -217,6 +209,8 @@ jobs:
           vercel-args: "--prod"
           working-directory: ./
 ```
+
+> **Nota (pnpm):** mesma regra do Passo 1 — `packageManager` no `package.json` já fixa a versão do pnpm para o `pnpm/action-setup`.
 
 ---
 
