@@ -350,6 +350,7 @@ Criar `.github/workflows/deploy-services.yml`:
 name: Deploy Services (Fly.io)
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -380,6 +381,8 @@ flyctl tokens create deploy -x 999999h
 ```
 
 Inserir o token em GitHub Secrets como `FLY_API_TOKEN`.
+
+Com `workflow_dispatch` no `on:`, dá para disparar **Deploy Services (Fly.io)** manualmente em **Actions → Run workflow**, sem commit só para testar o token.
 
 Quando o TCC backend chegar, duplicar este workflow em `deploy-tcc-backend.yml` com o path `apps/projects/sad-ciberseguranca/backend/**`.
 
