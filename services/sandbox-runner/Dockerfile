@@ -17,7 +17,7 @@ WORKDIR /repo/services/sandbox-runner
 RUN pnpm run build
 
 WORKDIR /repo
-RUN pnpm --filter @portfolio/sandbox-runner --prod deploy --legacy /out
+RUN pnpm --filter @portfolio/sandbox-runner --prod deploy /out
 
 FROM node:20-alpine AS runner
 WORKDIR /app
