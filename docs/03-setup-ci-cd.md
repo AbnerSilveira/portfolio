@@ -368,11 +368,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        working-directory: services/sandbox-runner
+      - run: flyctl deploy . --remote-only --dockerfile services/sandbox-runner/Dockerfile --config services/sandbox-runner/fly.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 ```
+
+O `Dockerfile` do serviço assume **contexto na raiz do monorepo** (copia `pnpm-lock.yaml`, `packages/` e `services/`). O comando segue a doc da Fly sobre monorepos: [Monorepo and multi-environment deployments](https://fly.io/docs/launch/monorepo/).
+
+**Deploy automático pelo painel Fly (GitHub integrado ao app):** costuma rodar `flyctl launch plan propose` na **raiz** do repo, onde não há `Dockerfile` — por isso o erro que você viu. Para monorepo, o caminho prático é **não depender** desse deploy: use **só** este workflow (Actions + `FLY_API_TOKEN`) ou desligue o Git no app Fly para parar de gerar deploys falhos em paralelo.
 
 Para obter o `FLY_API_TOKEN`:
 

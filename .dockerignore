@@ -1,0 +1,8 @@
+# Otimiza o contexto de build na raiz (Fly / CI).
+.git
+.github
+.turbo
+**/.turbo
+**/node_modules
+**/dist
+**/coverage

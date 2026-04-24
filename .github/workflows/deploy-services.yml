@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        working-directory: services/sandbox-runner
+      # Contexto na raiz do repo + Dockerfile no serviço (monorepo).
+      - run: flyctl deploy . --remote-only --dockerfile services/sandbox-runner/Dockerfile --config services/sandbox-runner/fly.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
