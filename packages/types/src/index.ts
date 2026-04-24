@@ -1,4 +1,9 @@
-export type ProjectCategory = "interactive" | "sandbox" | "video" | "documentation";
+/** Tipos compartilhados do monorepo (`@portfolio/types`). */
+export type ProjectCategory =
+  | "interactive"
+  | "sandbox"
+  | "video"
+  | "documentation";
 export type ProjectImpact = "high" | "medium" | "low";
 
 export interface ProjectMetadata {
