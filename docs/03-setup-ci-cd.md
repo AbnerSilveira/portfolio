@@ -201,16 +201,17 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: "--prod"
-          working-directory: ./
+      - name: Deploy to Vercel
+        run: npx --yes vercel@latest deploy --prod --yes
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 ```
 
 > **Nota (pnpm):** mesma regra do Passo 1 — `packageManager` no `package.json` já fixa a versão do pnpm para o `pnpm/action-setup`.
+
+> **Nota (Vercel):** `amondnet/vercel-action` embute CLI antiga; a API da Vercel exige CLI recente. Use `npx vercel@latest` no workflow (como acima).
 
 ---
 
