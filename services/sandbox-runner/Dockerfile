@@ -16,15 +16,15 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 WORKDIR /repo/services/sandbox-runner
 RUN pnpm run build
 
+WORKDIR /repo
+RUN pnpm --filter @portfolio/sandbox-runner --prod deploy /out --legacy
+
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-COPY --from=builder /repo/services/sandbox-runner/package.json ./
-COPY --from=builder /repo/services/sandbox-runner/dist ./dist
+RUN addgroup -S app && adduser -S app -G app
 
-RUN npm install --omit=dev --ignore-scripts \
-  && addgroup -S app && adduser -S app -G app \
-  && chown -R app:app /app
+COPY --from=builder --chown=app:app /out ./
 
 USER app
 EXPOSE 4000
