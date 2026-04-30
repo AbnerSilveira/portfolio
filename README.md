@@ -24,7 +24,7 @@ Sistemas de Informação | 2023–2026 | São Paulo
 
 ## 1. Visão Geral
 
-Este monorepo concentra **15 projetos práticos de cibersegurança** desenvolvidos ao longo da graduação, mais o **TCC (SAD Cibersegurança)**. O portfólio público é o hub central — uma aplicação Next.js 15 que cataloga, demonstra e documenta cada projeto.
+Este monorepo concentra **15 projetos práticos de cibersegurança** desenvolvidos ao longo da graduação, mais o **TCC (SAD Cibersegurança)**. O portfólio público é o hub central — uma aplicação Next.js (App Router) — atualmente 16.x — que cataloga, demonstra e documenta cada projeto.
 
 ### O que este repositório faz
 
@@ -110,7 +110,7 @@ pnpm dev
 ```
 portfolio/
 ├── apps/
-│   ├── web/                          # Portfólio público (Next.js 15)
+│   ├── web/                          # Portfólio público (Next.js — atualmente 16.x)
 │   ├── admin/                        # Painel interno (dashboard do honeypot, métricas)
 │   └── projects/
 │       ├── rsa-visualizer/           # Projeto 1
@@ -166,7 +166,7 @@ portfolio/
 
 ### 5.1 `apps/web` — Portfólio Público
 
-Hub central. Next.js 15 com App Router, SSR e ISR.
+Hub central. Next.js (App Router) — atualmente 16.x — com SSR e ISR.
 
 **Rotas principais:**
 
@@ -180,7 +180,7 @@ Hub central. Next.js 15 com App Router, SSR e ISR.
 
 **Stack:**
 
-- Next.js 15 (App Router) + TypeScript 5
+- Next.js (App Router) — atualmente 16.x + TypeScript 5
 - Tailwind CSS + shadcn/ui (via `@portfolio/ui`)
 - MDX + Contentlayer2 para conteúdo dos projetos
 - Recharts + D3.js para visualizações
@@ -241,7 +241,7 @@ Runtime padrão para demos sandboxed. Define a interface `DemoRunner` que todo p
 
 - `config-eslint` — regras uniformes
 - `config-typescript` — `tsconfig` base
-- `config-tailwind` — preset com design tokens
+- `config-tailwind` — `theme.css` (Tailwind v4, CSS-first) com design tokens
 
 ---
 
@@ -373,7 +373,8 @@ REDIS_URL=redis://localhost:6379
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_SANDBOX_URL=http://localhost:4000
 RESEND_API_KEY=                  # Formulário de contato
-GITHUB_TOKEN=                    # Buscar stats dos repos
+CONTACT_FROM_EMAIL=              # Ex.: onboarding@resend.dev (modo de testes)
+CONTACT_TO_EMAIL=                # Email que vai receber os contatos
 ```
 
 ### `services/sandbox-runner/.env`

@@ -11,7 +11,7 @@
 
 Um monorepo gerenciado por **Turborepo + pnpm workspaces** que centraliza:
 
-- O **portfólio público** (Next.js 15) como hub central.
+- O **portfólio público** (Next.js (App Router) — atualmente 16.x) como hub central.
 - **15 projetos práticos** desenvolvidos ao longo da graduação, todos com viés de segurança.
 - O **TCC (SAD Cibersegurança)** — Sistema de Apoio à Decisão com Gordon-Loeb + AHP + TOPSIS.
 - Pacotes compartilhados (UI, crypto-utils, validators) que evitam duplicação.
@@ -53,10 +53,10 @@ Um monorepo gerenciado por **Turborepo + pnpm workspaces** que centraliza:
 
 | Camada          | Tecnologia                                     |
 | --------------- | ---------------------------------------------- |
-| Framework       | Next.js 15 (App Router)                        |
+| Framework       | Next.js (App Router) — atualmente 16.x         |
 | UI              | Tailwind CSS + shadcn/ui (via `@portfolio/ui`) |
 | Conteúdo        | MDX + Contentlayer2                            |
-| Formulários     | React Hook Form + Zod                          |
+| Formulários     | Formulário controlado (React `useState`) + Zod |
 | Estado servidor | TanStack React Query v5                        |
 | HTTP            | fetch nativo + wrapper tipado                  |
 | Charts          | Recharts + D3.js                               |
@@ -142,7 +142,7 @@ Este CLAUDE.md é o **guia do monorepo**. Cada `apps/projects/<slug>/CLAUDE.md` 
 ```
 portfolio/
 ├── apps/
-│   ├── web/                          # Next.js 15 — portfólio público
+│   ├── web/                          # Next.js (App Router) — atualmente 16.x — portfólio público
 │   ├── admin/                        # Next.js — painel interno
 │   └── projects/
 │       ├── rsa-visualizer/           # 1 — Matemática Discreta
@@ -188,7 +188,7 @@ portfolio/
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  apps/web (Next.js 15)                          │
+│  apps/web (Next.js — atualmente 16.x)           │
 │  Portfólio público, SSR, SEO                    │
 └──────┬────────────────────────┬─────────────────┘
        │                        │
@@ -338,9 +338,9 @@ Os honeypots do projeto 7 **não rodam 24/7**. São ativados em janelas planejad
 
 > Seção mais valiosa do arquivo. Atualizar sempre que resolver um problema novo.
 
-### 8.1 Next.js 15 App Router com MDX + Contentlayer
+### 8.1 Next.js (App Router) — atualmente 16.x — com MDX + Contentlayer
 
-**Problema:** Contentlayer original tem incompatibilidades com Next 15.
+**Problema:** Contentlayer original tem incompatibilidades com Next (App Router).
 
 **Solução:** usar **Contentlayer2** (fork mantido) ou migrar para **Fumadocs**. Validar na criação do `apps/web`.
 
@@ -398,6 +398,12 @@ Os honeypots do projeto 7 **não rodam 24/7**. São ativados em janelas planejad
 
 **Solução:** honeypot **não** roda em Fly.io. É o único serviço que exige temporada de VPS Hetzner dedicada. Fora da janela de coleta, a VPS é destruída e o dashboard mostra dados históricos congelados no Neon. Ver `deployment-topology.md` seção "Hetzner CPX11 (temporada de coleta)".
 
+### 8.11 Lições aprendidas (Fase 1 — `apps/web`)
+
+1. **Contentlayer antes de lint/typecheck/build em ambientes limpos (CI/Vercel).** Por isso os scripts do `apps/web` são prefixados com `pnpm contentlayer && ...`.
+2. **Turbo cache precisa declarar outputs e envs corretos.** Para evitar cache hits com build incompleto, o `turbo.json` declara `.contentlayer/generated/**` em `outputs` e lista as env vars necessárias no `env` do task `build`.
+3. **Next 16 exige flag explícita de bundler no `next build`.** Na Fase 1 fixamos `--webpack` (setup conservador); evolução futura para `--turbopack` fica como melhoria incremental.
+
 ---
 
 ## 9. Padrões de Código
@@ -417,7 +423,7 @@ Os honeypots do projeto 7 **não rodam 24/7**. São ativados em janelas planejad
 - Hooks: prefixo `use` (ex: `useProjects`)
 - Serviços: sufixo `.service.ts` (ex: `projects.service.ts`)
 - Estado de servidor sempre via **React Query** (`useQuery` para leitura, `useMutation` para escrita)
-- Formulários com **React Hook Form + Zod** — validação no schema Zod, não no componente
+- Formulários controlados com React (`useState`) + Zod — validação no schema Zod, não no componente
 - Nunca enviar objeto de formulário diretamente para API — usar mapper
 - Server Components por padrão; `'use client'` apenas quando necessário
 
@@ -431,7 +437,7 @@ fix(sniffer): handle empty packet capture buffer
 refactor(ui): extract DemoFrame to @portfolio/ui
 test(crypto-utils): add RFC 8017 test vectors for RSA
 docs(honeypot): document LGPD compliance strategy
-chore(deps): bump next from 15.0.0 to 15.1.0
+chore(deps): bump next from 16.0.0 to 16.1.0
 security(waf): patch XSS bypass in rule engine
 ```
 

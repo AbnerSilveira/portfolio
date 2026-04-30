@@ -182,6 +182,7 @@ O deploy do portfólio público (`apps/web`) é feito via **integração nativa 
 
 - Framework Preset: **Next.js**
 - Root Directory: **`apps/web`**
+- Include files outside the root directory: **Enabled**
 
 Isso evita workflows redundantes e deploy duplicado a cada push. Mantenha apenas CI/Security em GitHub Actions.
 
@@ -370,9 +371,8 @@ No dashboard do Vercel:
 1. Import Git Repository → selecionar `portfolio`
 2. Root Directory: `apps/web`
 3. Framework Preset: Next.js
-4. Build Command: `cd ../.. && pnpm build --filter=web`
-5. Install Command: `cd ../.. && pnpm install --frozen-lockfile`
-6. Output Directory: `apps/web/.next`
+4. **Build Command, Install Command, Output Directory:** sem overrides (campos vazios = defaults do Next.js/Turborepo)
+5. Include files outside the root directory: **Enabled**
 
 Configurar domínio: `portfolio.<seu-dominio>.com.br`.
 
@@ -382,9 +382,11 @@ Variáveis de ambiente:
 NEXT_PUBLIC_SITE_URL=https://portfolio.<seu-dominio>.com.br
 NEXT_PUBLIC_SANDBOX_URL=https://portfolio-sandbox-runner.fly.dev
 RESEND_API_KEY=<sua-key>
-GITHUB_TOKEN=<token-leitura-repos>
-DATABASE_URL=<NEON_DATABASE_URL_MAIN>
+CONTACT_FROM_EMAIL=onboarding@resend.dev
+CONTACT_TO_EMAIL=<email-que-recebe-os-contatos>
 ```
+
+> **Resend (modo de testes):** enquanto você não tiver um domínio próprio verificado no Resend, use `CONTACT_FROM_EMAIL=onboarding@resend.dev` (limitações do modo de onboarding). Quando tiver domínio verificado, troque para um `from` do seu domínio.
 
 ---
 

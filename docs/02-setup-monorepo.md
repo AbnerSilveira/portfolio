@@ -161,8 +161,21 @@ Criar `turbo.json` na raiz:
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"],
-      "env": ["NODE_ENV"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        ".contentlayer/generated/**",
+        "dist/**",
+        "build/**"
+      ],
+      "env": [
+        "NODE_ENV",
+        "RESEND_API_KEY",
+        "CONTACT_FROM_EMAIL",
+        "CONTACT_TO_EMAIL",
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_SANDBOX_URL"
+      ]
     },
     "dev": {
       "cache": false,
@@ -631,11 +644,9 @@ No GitHub, em Settings:
   - Require status checks to pass before merging
   - Require conversation resolution before merging
 - **Secrets and variables → Actions** — adicionar:
-  - `VERCEL_TOKEN`
-  - `VERCEL_ORG_ID`
-  - `VERCEL_PROJECT_ID`
   - `SNYK_TOKEN`
   - `SEMGREP_APP_TOKEN` (opcional)
+  - (Vercel) **não é necessário** `VERCEL_TOKEN/ORG_ID/PROJECT_ID` quando o deploy do `apps/web` usa integração nativa Vercel ↔ GitHub. Se você optar por automatizar via workflow no futuro, aí sim esses secrets voltam a fazer sentido.
 
 ---
 

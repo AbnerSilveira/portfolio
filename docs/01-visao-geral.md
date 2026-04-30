@@ -23,9 +23,9 @@ Alternativas consideradas e rejeitadas:
 - **Nx** — mais poderoso mas excesso para solo dev. Melhor para equipes grandes polyglot.
 - **pnpm puro** — funciona, mas perde o cache do Turbo. Para 16 projetos, faz diferença.
 
-## Por que Next.js 15 para o portfólio
+## Por que Next.js (App Router) para o portfólio
 
-Portfólio público precisa de SEO forte, SSR e páginas estáticas rápidas. Next.js 15 com App Router faz isso nativamente, com deploy gratuito no Vercel e integração direta com MDX para o conteúdo dos projetos.
+Portfólio público precisa de SEO forte, SSR e páginas estáticas rápidas. Next.js (App Router) — atualmente 16.x — faz isso nativamente, com deploy gratuito no Vercel e integração direta com MDX para o conteúdo dos projetos.
 
 ## Estratégia de execução
 

@@ -60,10 +60,10 @@ Como os componentes do monorepo estão distribuídos em produção.
 
 **Hospeda:**
 
-- `portfolio.<dominio>` — `apps/web` (Next.js 15)
+- `portfolio.<dominio>` — `apps/web` (Next.js (App Router) — atualmente 16.x)
 - `tcc.<dominio>` — `apps/projects/sad-ciberseguranca/frontend` (Vite + React)
 
-**Deploy:** automático via GitHub Actions (`deploy-web.yml`, `deploy-tcc-frontend.yml`)
+**Deploy:** `apps/web` via **integração nativa Vercel ↔ GitHub** (Framework Preset = Next.js; Root Directory = `apps/web`; Include files outside = Enabled). TCC frontend: [a confirmar]
 
 **Monitoramento:** analytics built-in do Vercel
 

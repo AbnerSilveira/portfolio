@@ -23,11 +23,12 @@ Editar `apps/web/package.json`:
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "contentlayer": "contentlayer2 build",
+    "build": "pnpm contentlayer && next build --webpack",
     "start": "next start",
-    "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "lint": "pnpm contentlayer && eslint .",
+    "typecheck": "pnpm contentlayer && tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest"
   }
 }
@@ -38,6 +39,7 @@ Adicionar dependências:
 ```bash
 pnpm add next@latest react@latest react-dom@latest
 pnpm add -D @portfolio/config-eslint@workspace:* @portfolio/config-typescript@workspace:* @portfolio/config-tailwind@workspace:* @portfolio/types@workspace:*
+pnpm add -D @portfolio/ui@workspace:*
 pnpm add -D vitest @testing-library/react @testing-library/jest-dom jsdom @vitejs/plugin-react
 pnpm add -D tailwindcss@latest @tailwindcss/postcss@latest tw-animate-css@latest
 ```
@@ -335,7 +337,7 @@ apps/web/src/
 │       └── sandbox/run/route.ts
 ├── components/
 │   ├── Hero.tsx
-│   ├── FeaturedProjects.tsx
+│   ├── Mdx.tsx
 │   └── ContactForm.tsx
 └── lib/
     ├── projects.ts                      # Query helpers
@@ -390,9 +392,9 @@ export default function HomePage() {
 ```typescript
 import { allProjects } from "contentlayer/generated";
 import { notFound } from "next/navigation";
-import { useMDXComponent } from "next-contentlayer2/hooks";
+import { Mdx } from "@/components/Mdx";
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   return allProjects.map((p) => ({ slug: p.slug }));
 }
 
@@ -405,8 +407,6 @@ export default async function ProjectPage({
   const project = allProjects.find((p) => p.slug === slug);
   if (!project) notFound();
 
-  const MDX = useMDXComponent(project.body.code);
-
   return (
     <article className="container py-12">
       <header className="mb-8">
@@ -417,7 +417,7 @@ export default async function ProjectPage({
         <p className="mt-4 text-lg text-muted-foreground">{project.description}</p>
       </header>
       <div className="prose prose-neutral max-w-none dark:prose-invert">
-        <MDX />
+        <Mdx code={project.body.code} />
       </div>
     </article>
   );
@@ -444,15 +444,27 @@ const contactSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json(
+      { success: false, error: "RESEND_API_KEY is not configured" },
+      { status: 500 },
+    );
+  }
+
   try {
-    const body = await request.json();
+    const body: unknown = await request.json();
     const data = contactSchema.parse(body);
 
+    const from = process.env.CONTACT_FROM_EMAIL ?? "portfolio@example.com";
+    const to = process.env.CONTACT_TO_EMAIL ?? "you@example.com";
+
+    const resend = new Resend(apiKey);
     await resend.emails.send({
-      from: "portfolio@<seu-dominio>.com.br",
-      to: "<seu-email>@gmail.com",
+      from,
+      to,
       subject: `[Portfolio] Contato de ${data.name}`,
-      reply_to: data.email,
+      replyTo: data.email,
       text: data.message,
     });
 
@@ -481,19 +493,28 @@ const runSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  const body: unknown = await request.json();
   const parsed = runSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_SANDBOX_URL}/run`, {
+  const baseUrl =
+    process.env.SANDBOX_RUNNER_URL ?? process.env.NEXT_PUBLIC_SANDBOX_URL;
+  if (!baseUrl) {
+    return NextResponse.json(
+      { error: "Sandbox runner URL not configured" },
+      { status: 500 },
+    );
+  }
+
+  const response = await fetch(`${baseUrl.replace(/\/$/, "")}/run`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(parsed.data),
   });
 
-  const data = await response.json();
+  const data = await response.json().catch(() => null);
   return NextResponse.json(data, { status: response.status });
 }
 ```
@@ -608,7 +629,9 @@ Acessar http://localhost:3000. Validar:
 - [ ] `/sitemap.xml` e `/robots.txt` retornam
 - [ ] Lighthouse: Performance ≥ 95, SEO ≥ 95, Accessibility ≥ 95
 
-Commitar e push. O workflow `deploy-web.yml` vai deployar automaticamente no Vercel.
+Commitar e push. O deploy do `apps/web` acontece via **integração nativa Vercel ↔ GitHub**.
+
+- (Vercel) Configurar Framework Preset = Next.js, Root Directory = apps/web, Include files outside = Enabled
 
 ---
 
