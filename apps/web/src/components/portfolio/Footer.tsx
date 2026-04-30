@@ -8,13 +8,13 @@ export function Footer() {
           <span className="text-primary">$</span> echo &quot;© {year} Abner
           Silveira&quot;
         </p>
-        <ul className="flex items-center gap-6">
+        <ul className="flex items-center gap-6 font-mono text-sm">
           <li>
             <a
               href="https://github.com/"
               target="_blank"
               rel="noreferrer"
-              className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              className="text-muted-foreground transition-colors hover:text-primary"
             >
               GitHub
             </a>
@@ -24,7 +24,7 @@ export function Footer() {
               href="https://www.linkedin.com/"
               target="_blank"
               rel="noreferrer"
-              className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              className="text-muted-foreground transition-colors hover:text-primary"
             >
               LinkedIn
             </a>

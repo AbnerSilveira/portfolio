@@ -122,10 +122,10 @@ const showVars = (delay: number, duration = 0.6): CSSProperties =>
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-border bg-background pt-40 pb-20 sm:pt-48 sm:pb-24">
+    <section className="relative overflow-hidden bg-background pt-40 pb-20 sm:pt-48 sm:pb-24">
       <div className="relative mx-auto max-w-6xl px-6">
         <div
-          className="pointer-events-none absolute inset-y-0 right-6 hidden items-center justify-center hero-show md:flex"
+          className="pointer-events-none absolute inset-y-0 right-0 hidden translate-x-6 items-center justify-center hero-show md:flex md:translate-x-12"
           aria-hidden
           style={{
             ...showVars(HERO_DELAY + 0.8, 1.2),

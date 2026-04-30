@@ -30,14 +30,14 @@ export function Navbar() {
         scrolled && "navbar-scrolled border-border",
       )}
     >
-      <div className="container flex h-14 items-center justify-between">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-6">
         <NavLink
           href="/"
           exact
-          className="font-mono text-sm font-medium tracking-tight text-muted-foreground hover:text-foreground"
-          activeClassName="text-primary"
+          className="font-mono text-sm font-medium tracking-tight hover:opacity-90"
         >
-          portfolio
+          <span className="text-primary">~/</span>
+          <span className="text-muted-foreground">portfolio</span>
         </NavLink>
         <div className="flex items-center gap-6">
           <nav className="flex items-center gap-4 text-sm text-muted-foreground">

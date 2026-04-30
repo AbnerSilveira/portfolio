@@ -1,20 +1,20 @@
-"use client";
-
 import type { ProjectMetadata } from "@portfolio/types";
-import type { CSSProperties } from "react";
 
-import { useInView } from "../hooks/use-in-view";
 import { cn } from "../lib/cn";
 
 export interface ProjectCardProps {
   project: ProjectMetadata;
   className?: string;
+  /** Quando definido, substitui o link padrão `/projetos/[slug]` (ex.: placeholders → `/projetos`). */
+  href?: string;
+  "aria-label"?: string;
 }
 
-const impactDot: Record<ProjectMetadata["impact"], string> = {
-  high: "bg-destructive",
-  medium: "bg-warning",
-  low: "bg-muted-foreground",
+/** Classes definidas em `apps/web/src/app/globals.css` (evita purge do pacote ui). */
+const impactDotClass: Record<ProjectMetadata["impact"], string> = {
+  high: "project-card-impact-dot--high",
+  medium: "project-card-impact-dot--medium",
+  low: "project-card-impact-dot--low",
 };
 
 const impactLabel: Record<ProjectMetadata["impact"], string> = {
@@ -23,61 +23,65 @@ const impactLabel: Record<ProjectMetadata["impact"], string> = {
   low: "Impacto baixo",
 };
 
-export function ProjectCard({ project, className }: ProjectCardProps) {
-  const { ref, inView } = useInView<HTMLParagraphElement>({ once: true });
-  const steps = String(Math.min(Math.max(project.description.length, 12), 80));
+/** Espaço vertical igual entre blocos (cat · título+dot · descrição · tags). */
+const CARD_BLOCK_GAP = "gap-y-3 sm:gap-y-3.5";
+
+export function ProjectCard({
+  project,
+  className,
+  href,
+  "aria-label": ariaLabel,
+}: ProjectCardProps) {
+  const to = href ?? `/projetos/${project.slug}`;
 
   return (
     <a
-      href={`/projetos/${project.slug}`}
+      href={to}
+      aria-label={ariaLabel}
       className={cn(
-        "project-card group block cursor-pointer rounded-lg border border-border bg-card p-5 no-underline",
+        "project-card group flex h-full min-h-[168px] w-full cursor-pointer flex-col rounded-lg border border-border bg-card p-3.5 no-underline sm:min-h-[180px] sm:p-4",
+        CARD_BLOCK_GAP,
         className,
       )}
     >
-      <p className="mb-3 font-mono text-xs text-muted-foreground">
-        <span className="text-primary">$</span> cat {project.slug}.md
-      </p>
-
-      <header className="flex items-start gap-2.5">
-        <span
-          aria-label={impactLabel[project.impact]}
-          title={impactLabel[project.impact]}
-          className={cn(
-            "mt-0.5 inline-block h-2 w-2 shrink-0 rounded-full",
-            impactDot[project.impact],
-          )}
-        />
-        <h3 className="text-base font-medium leading-tight text-foreground group-hover:text-primary">
-          {project.title}
-        </h3>
-      </header>
-
-      <p
-        ref={ref}
-        className={cn(
-          "mt-3 text-sm leading-relaxed text-muted-foreground",
-          inView ? "tw-reveal" : "opacity-0",
-        )}
-        style={
-          {
-            "--tw-delay": "0.1s",
-            "--tw-duration": "1.6s",
-            "--tw-steps": steps,
-          } as CSSProperties
-        }
+      <div
+        className={cn("flex min-h-0 min-w-0 flex-1 flex-col", CARD_BLOCK_GAP)}
       >
-        {project.description}
-      </p>
+        <p className="font-mono text-[11px] leading-normal tracking-wide sm:text-xs sm:leading-normal">
+          <span className="text-primary">$</span>{" "}
+          <span className="text-primary">cat</span>{" "}
+          <span className="text-foreground/55">{project.slug}.md</span>
+        </p>
 
-      <ul className="mt-4 flex flex-wrap gap-x-3 gap-y-1.5">
-        {project.tags.map((t) => (
-          <li key={t} className="font-mono text-xs text-muted-foreground">
-            <span className="text-primary">--</span>
-            {t}
-          </li>
-        ))}
-      </ul>
+        <header className="flex items-start gap-2.5 text-sm font-semibold leading-snug sm:text-base">
+          <span
+            aria-label={impactLabel[project.impact]}
+            title={impactLabel[project.impact]}
+            className={cn(
+              "project-card-impact-dot mt-[0.3em]",
+              impactDotClass[project.impact],
+            )}
+          />
+          <h3 className="min-w-0 flex-1 tracking-tight text-foreground group-hover:text-primary">
+            {project.title}
+          </h3>
+        </header>
+
+        <p className="min-h-0 flex-1 text-xs leading-relaxed text-muted-foreground sm:text-[13px] sm:leading-relaxed">
+          {project.description}
+        </p>
+      </div>
+
+      {project.tags.length > 0 ? (
+        <ul className="flex flex-wrap gap-x-2.5 gap-y-1 font-mono text-[11px] leading-normal tracking-wide text-muted-foreground sm:text-xs sm:leading-normal">
+          {project.tags.map((t) => (
+            <li key={t}>
+              <span className="text-primary">--</span>
+              {t}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </a>
   );
 }
