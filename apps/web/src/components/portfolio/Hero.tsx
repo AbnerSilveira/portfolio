@@ -133,7 +133,7 @@ export function Hero() {
           }}
         >
           <Image
-            src="/icon-cibersecurity.png"
+            src="/icon-cybersecurity.png"
             alt=""
             width={768}
             height={768}
