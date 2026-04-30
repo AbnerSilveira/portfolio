@@ -7,7 +7,7 @@ export function FeaturedProjects() {
   const featured = allProjects.filter((p) => p.impact === "high").slice(0, 6);
 
   return (
-    <section className="container py-16">
+    <section id="projetos" className="container scroll-mt-20 py-16">
       <div className="mb-8 flex items-end justify-between gap-4">
         <h2 className="text-3xl font-semibold tracking-tight">
           Projetos em destaque
