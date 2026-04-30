@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
 
 import { ThemeToggle } from "./ThemeToggle";
@@ -31,22 +31,25 @@ export function Navbar() {
       )}
     >
       <div className="container flex h-14 items-center justify-between">
-        <Link
+        <NavLink
           href="/"
-          className="font-mono text-sm font-medium tracking-tight text-foreground hover:text-primary"
+          exact
+          className="font-mono text-sm font-medium tracking-tight text-muted-foreground hover:text-foreground"
+          activeClassName="text-primary"
         >
           portfolio
-        </Link>
+        </NavLink>
         <div className="flex items-center gap-6">
           <nav className="flex items-center gap-4 text-sm text-muted-foreground">
             {links.map((l) => (
-              <Link
+              <NavLink
                 key={l.href}
                 href={l.href}
                 className="hover:text-foreground"
+                activeClassName="font-medium text-foreground"
               >
                 {l.label}
-              </Link>
+              </NavLink>
             ))}
           </nav>
           <ThemeToggle />
