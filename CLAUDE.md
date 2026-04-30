@@ -503,9 +503,9 @@ Baseado no artigo de Fábio Akita "Do Zero à Pós-Produção em 1 Semana" (Feb 
 - [x] TCC SAD Cibersegurança com Fase 2 (modelagem) completa
 - [x] Setup do monorepo (Turborepo + pnpm)
 - [x] Criação dos pacotes compartilhados (`@portfolio/config-*`)
-- [x] Bootstrap do `apps/web` (Next.js 15)
 - [x] Pipeline CI base (GitHub Actions)
 - [x] **Decisão de arquitetura (abr/2026): scale-to-zero com Fly.io + Neon + cron actions em vez de Railway + VPS 24/7. Ver `deployment-topology.md`.**
+- [x] **Bootstrap do `apps/web` (abr/2026, doc 04 — Passo 1):** Next.js 16.2 + Turbopack (App Router, `src/`, alias `@/*`), Tailwind v4 (CSS-first) com tema compartilhado em `@portfolio/config-tailwind/theme.css` (sem `tailwind.config.ts`), `tsconfig.json` estendendo `@portfolio/config-typescript/nextjs.json`, devDeps de workspace plugadas (`@portfolio/config-eslint`, `@portfolio/config-tailwind`, `@portfolio/config-typescript`, `@portfolio/types`, `@portfolio/ui`) e ferramentas de teste instaladas (Vitest + Testing Library + jsdom). `pnpm install` e `pnpm --filter web typecheck` verdes. Shadcn/ui inicializado com `shadcn@latest init` (criou `components.json`, `src/lib/utils.ts` e componentes iniciais). Pendente do doc 04: Passo 3+ (componentes base do `@portfolio/ui`, MDX/Contentlayer, rotas, API routes, SEO, deploy) e plumbing do ESLint do app.
 
 **Próximos passos imediatos:**
 

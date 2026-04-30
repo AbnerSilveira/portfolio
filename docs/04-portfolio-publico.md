@@ -1,6 +1,6 @@
 # 04 — Portfólio Público (apps/web)
 
-Construção do hub central em Next.js 15. Este é o rosto público do portfólio — precisa ser rápido, bonito e ter SEO forte.
+Construção do hub central em Next.js (App Router). Este é o rosto público do portfólio — precisa ser rápido, bonito e ter SEO forte.
 
 Uso recomendado: **Cursor** para a estrutura e lógica, **Lovable** quando quiser gerar telas específicas rápido. Sempre validar o código gerado contra os padrões do `CLAUDE.md` antes de comitar.
 
@@ -39,6 +39,7 @@ Adicionar dependências:
 pnpm add next@latest react@latest react-dom@latest
 pnpm add -D @portfolio/config-eslint@workspace:* @portfolio/config-typescript@workspace:* @portfolio/config-tailwind@workspace:* @portfolio/types@workspace:*
 pnpm add -D vitest @testing-library/react @testing-library/jest-dom jsdom @vitejs/plugin-react
+pnpm add -D tailwindcss@latest @tailwindcss/postcss@latest tw-animate-css@latest
 ```
 
 Ajustar `tsconfig.json`:
@@ -56,18 +57,14 @@ Ajustar `tsconfig.json`:
 }
 ```
 
-Ajustar `tailwind.config.ts`:
+> **Tailwind v4 (CSS-first):** este monorepo usa Tailwind 4. Não há `tailwind.config.ts` por padrão.\n+>\n+> Em vez disso, o tema/tokens compartilhados ficam em `@portfolio/config-tailwind/theme.css` e são importados no `globals.css`.
 
-```typescript
-import type { Config } from "tailwindcss";
-import preset from "@portfolio/config-tailwind/preset.js";
+Atualizar `src/app/globals.css`:
 
-const config: Config = {
-  presets: [preset],
-  content: ["./src/**/*.{ts,tsx,mdx}", "../../packages/ui/src/**/*.{ts,tsx}"],
-};
-
-export default config;
+```css
+@import "tailwindcss";
+@import "@portfolio/config-tailwind/theme.css";
+@import "tw-animate-css";
 ```
 
 ---
@@ -124,16 +121,22 @@ export function cn(...inputs: ClassValue[]) {
 }
 ```
 
+`src/index.ts` (mínimo no Passo 2):
+
+```typescript
+export * from "./lib/cn";
+```
+
 ### Inicializar shadcn/ui
 
 Dentro de `apps/web`:
 
 ```bash
 cd ../../apps/web
-pnpm dlx shadcn@latest init
+pnpm dlx shadcn@latest init --defaults
 ```
 
-Escolher as opções padrão. Os componentes gerados podem ser movidos manualmente para `packages/ui/src/components` conforme forem usados em múltiplos lugares.
+Escolher as opções padrão. O `init` vai criar `components.json`, `src/lib/utils.ts` e componentes iniciais (ex.: `Button`).\n+\n+**Ajuste recomendado no monorepo:** em `src/lib/utils.ts`, reexportar `cn` do pacote `@portfolio/ui` para evitar duplicação.
 
 ---
 

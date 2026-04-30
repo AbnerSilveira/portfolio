@@ -355,34 +355,24 @@ cd packages/config-tailwind
   "name": "@portfolio/config-tailwind",
   "version": "0.0.0",
   "private": true,
-  "main": "./preset.js",
-  "files": ["preset.js"],
+  "main": "./theme.css",
+  "files": ["theme.css"],
   "peerDependencies": {
-    "tailwindcss": "^3.4.0"
+    "tailwindcss": "^4.0.0"
   }
 }
 ```
 
-`preset.js`:
+`theme.css`:
 
-```javascript
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [],
-  darkMode: ["class"],
-  theme: {
-    extend: {
-      colors: {
-        // Design tokens do portfólio — ajustar após definir identidade visual
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: "hsl(var(--primary))",
-        "primary-foreground": "hsl(var(--primary-foreground))",
-      },
-    },
-  },
-  plugins: [require("tailwindcss-animate")],
-};
+```css
+@theme inline {
+  /* Design tokens do portfólio — ajustar após definir identidade visual */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
 ```
 
 ### 3.4 `@portfolio/types`

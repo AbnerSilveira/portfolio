@@ -161,6 +161,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Rode Python só quando houver código Python analisável no repo.
+        # Em monorepo JS/TS puro, o job de Python costuma falhar com "No source code was seen during the build".
         language: [javascript-typescript]
     steps:
       - uses: actions/checkout@v4
@@ -418,6 +420,8 @@ DATABASE_URL=<NEON_DATABASE_URL_MAIN>
 
 ## Passo 8 — Cloudflare R2 para storage
 
+> **Nota:** este passo é **infra externa** e não costuma aparecer como “check verde” no CI. Faça quando você for realmente publicar assets grandes (ex.: vídeos de demo, PCAPs, imagens pesadas) para não estourar bandwidth do Vercel. Até lá, pode ficar pendente sem bloquear a Fase 0.
+
 No Cloudflare:
 
 1. R2 → Create Bucket → `portfolio-assets`
@@ -434,6 +438,8 @@ R2_SECRET_ACCESS_KEY=
 R2_BUCKET=portfolio-assets
 R2_PUBLIC_URL=https://assets.<seu-dominio>.com.br
 ```
+
+**Onde isso entra primeiro no roadmap:** Sniffer (#2 — vídeo/PCAP), SQL Injection Scanner (#4 — relatórios/fixtures), IDS (#13 — campanhas em PCAP), IoT Security (#15 — vídeo com takes grandes) e, se quiser self-host de assets, Honeypot (#7). Detalhe por projeto em `docs/05-roadmap-projetos.md` e nos `docs/roadmap/*.md` correspondentes.
 
 ---
 
@@ -562,16 +568,33 @@ Só criar quando o projeto Threat Intel Dashboard chegar no roadmap (2025/2).
 
 ## Checklist de conclusão da Fase 0 (completa)
 
-- [ ] CI rodando: lint, typecheck, test, build
-- [ ] Security scan rodando: Gitleaks, Semgrep, Snyk, CodeQL
-- [ ] Vercel conectado e deploy automático funcionando
-- [ ] Neon provisionado com branches `main`, `tcc-sad-ciberseguranca`, `honeypot-capture`, `threat-intel`
-- [ ] Connection strings do Neon em GitHub Secrets e Fly.io Secrets
-- [ ] Fly.io com app `portfolio-sandbox-runner` deployado e scale-to-zero funcionando
-- [ ] `https://portfolio-sandbox-runner.fly.dev/health` respondendo
-- [ ] Domain mapping: `api.<seu-dominio>.com.br` apontando para o Fly app
-- [ ] Cloudflare R2 provisionado
-- [ ] Branch protection em `main` exige CI verde
+Marque no GitHub / consoles o que não dá para inferir só pelo repositório.
+
+### Auditoria (repo `portfolio/` — 2026-04-24)
+
+| Critério                                   | Evidência no repo                                                             | Verificação externa                                                     |
+| ------------------------------------------ | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| CI (lint, typecheck, test, build)          | `.github/workflows/ci.yml` com quatro jobs                                    | Último run verde em **Actions**                                         |
+| Security (Gitleaks, Semgrep, Snyk, CodeQL) | `.github/workflows/security.yml`                                              | Secrets `SEMGREP_APP_TOKEN`, `SNYK_TOKEN`; aba **Security** para CodeQL |
+| Deploy Vercel                              | `.github/workflows/deploy-web.yml` (`npx vercel@latest deploy --prod`)        | Secrets `VERCEL_*`; dashboard Vercel                                    |
+| Fly sandbox-runner                         | `services/sandbox-runner/`, `deploy-services.yml`, `fly.toml` (scale-to-zero) | `GET /health` → **200** com `{"status":"ok",...}` (testado 2026-04-24)  |
+| Neon + branches + secrets                  | —                                                                             | Console Neon + GitHub Secrets + Fly secrets                             |
+| Domínio `api.*` → Fly                      | —                                                                             | DNS no provedor                                                         |
+| R2                                         | —                                                                             | Opcional até assets grandes (Passo 8); não bloqueia Fase 0              |
+| Branch protection                          | —                                                                             | **Settings → Branches** em `main`                                       |
+
+### Itens (marque você no clone local ou no PR)
+
+- [x] CI rodando: lint, typecheck, test, build (workflow em `.github/workflows/ci.yml`)
+- [x] Security scan rodando: Gitleaks, Semgrep, Snyk, CodeQL (`.github/workflows/security.yml`)
+- [x] Vercel: workflow de deploy automático no `push` em `main` (paths `apps/web`, `packages`, lockfile)
+- [ ] Neon provisionado com branches `main`, `tcc-sad-ciberseguranca`, `honeypot-capture`, `threat-intel` (confirmar no console)
+- [ ] Connection strings do Neon em GitHub Secrets e Fly.io Secrets (confirmar nos dashboards)
+- [x] Fly.io com app `portfolio-sandbox-runner` deployado e scale-to-zero (`fly.toml`: `min_machines_running = 0`, checks em `/health`)
+- [x] `https://portfolio-sandbox-runner.fly.dev/health` respondendo (verificado 2026-04-24)
+- [ ] Domain mapping: `api.<seu-dominio>.com.br` apontando para o Fly app (só se você for usar hostname próprio)
+- [ ] Cloudflare R2 provisionado (adiável; ver nota do Passo 8)
+- [ ] Branch protection em `main` exige CI verde (configuração no GitHub, não versionada aqui)
 
 **Próximo passo:** `04-portfolio-publico.md`.
 

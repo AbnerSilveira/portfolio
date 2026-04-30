@@ -1,0 +1,8 @@
+@theme inline {
+  /* Design tokens do portfólio — ajustar após definir identidade visual */
+  /* Tokens podem ser HSL ou OKLCH; não envolver em hsl(). */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}

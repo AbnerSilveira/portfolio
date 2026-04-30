@@ -2,9 +2,11 @@
   "name": "@portfolio/config-tailwind",
   "version": "0.0.0",
   "private": true,
-  "main": "./preset.js",
-  "files": ["preset.js"],
+  "main": "./theme.css",
+  "files": [
+    "theme.css"
+  ],
   "peerDependencies": {
-    "tailwindcss": "^3.4.0"
+    "tailwindcss": "^4.0.0"
   }
 }
