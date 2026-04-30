@@ -1,4 +1,5 @@
 import { SemesterTimeline } from "@portfolio/ui";
+import { ContactForm } from "@/components/ContactForm";
 
 export const metadata = {
   title: "Sobre",
@@ -58,6 +59,16 @@ export default function SobrePage() {
               ]}
             />
           </div>
+        </div>
+      </section>
+
+      <section className="mt-16 border-t border-border pt-12">
+        <h2 className="text-2xl font-semibold">Contato</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Quer falar comigo? Envie uma mensagem que eu respondo no seu email.
+        </p>
+        <div className="mt-6">
+          <ContactForm />
         </div>
       </section>
     </main>
