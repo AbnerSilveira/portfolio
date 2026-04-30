@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint .",
     "contentlayer": "contentlayer2 build",
-    "typecheck": "contentlayer2 build && tsc --noEmit",
+    "build": "pnpm contentlayer && next build --webpack",
+    "start": "next start",
+    "lint": "pnpm contentlayer && eslint .",
+    "typecheck": "pnpm contentlayer && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
   },
