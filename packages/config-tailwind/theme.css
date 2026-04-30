@@ -1,6 +1,6 @@
 @theme inline {
-  /* Design tokens do portfólio — ajustar após definir identidade visual */
-  /* Tokens podem ser HSL ou OKLCH; não envolver em hsl(). */
+  /* Tokens semânticos vivem em apps/web/src/app/globals.css (:root / .dark).
+     Referência: docs/UI-portifolio-teste/design-system.md */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);

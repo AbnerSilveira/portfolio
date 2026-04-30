@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Footer, Navbar } from "@portfolio/ui";
+
+import { AppProviders } from "@/components/portfolio/AppProviders";
+import { Footer } from "@/components/portfolio/Footer";
+import { Navbar } from "@/components/portfolio/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,25 +42,15 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <Navbar
-          brand={{ label: "Portfolio", href: "/" }}
-          links={[
-            { label: "Projetos", href: "/projetos" },
-            { label: "TCC", href: "/tcc" },
-            { label: "Sobre", href: "/sobre" },
-          ]}
-        />
-        <div className="flex-1">{children}</div>
-        <Footer
-          copyright={`© ${new Date().getFullYear()} — Portfólio Cibersegurança`}
-          links={[
-            { label: "GitHub", href: "https://github.com/" },
-            { label: "LinkedIn", href: "https://www.linkedin.com/" },
-          ]}
-        />
+      <body className="flex min-h-full flex-col bg-background text-foreground">
+        <AppProviders>
+          <Navbar />
+          <div className="flex-1">{children}</div>
+          <Footer />
+        </AppProviders>
       </body>
     </html>
   );
