@@ -241,6 +241,25 @@
     }
   }
 
+  .tw-reveal {
+    display: block;
+    overflow: hidden;
+    opacity: 0;
+    animation: typewriter-reveal var(--tw-duration, 1.4s)
+      steps(var(--tw-steps, 30), end) var(--tw-delay, 0s) forwards;
+  }
+
+  @keyframes typewriter-reveal {
+    0% {
+      clip-path: inset(0 100% 0 0);
+      opacity: 1;
+    }
+    100% {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+    }
+  }
+
   .project-card {
     transition:
       transform 0.22s ease,
