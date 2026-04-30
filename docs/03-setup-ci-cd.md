@@ -176,44 +176,14 @@ Criar `.gitleaks.toml` na raiz com regras customizadas (opcional — Gitleaks te
 
 ---
 
-## Passo 3 — Deploy workflow (Vercel)
+## Passo 3 — Deploy do `apps/web` (Vercel)
 
-Criar `.github/workflows/deploy-web.yml`:
+O deploy do portfólio público (`apps/web`) é feito via **integração nativa Vercel ↔ GitHub** (Settings → Git no painel da Vercel), com:
 
-```yaml
-name: Deploy Web
+- Framework Preset: **Next.js**
+- Root Directory: **`apps/web`**
 
-on:
-  push:
-    branches: [main]
-    paths:
-      - "apps/web/**"
-      - "packages/**"
-      - "pnpm-lock.yaml"
-
-jobs:
-  deploy:
-    name: Deploy to Vercel
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: Deploy to Vercel
-        run: npx --yes vercel@latest deploy --prod --yes
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-```
-
-> **Nota (pnpm):** mesma regra do Passo 1 — `packageManager` no `package.json` já fixa a versão do pnpm para o `pnpm/action-setup`.
-
-> **Nota (Vercel):** `amondnet/vercel-action` embute CLI antiga; a API da Vercel exige CLI recente. Use `npx vercel@latest` no workflow (como acima).
+Isso evita workflows redundantes e deploy duplicado a cada push. Mantenha apenas CI/Security em GitHub Actions.
 
 ---
 
@@ -576,7 +546,7 @@ Marque no GitHub / consoles o que não dá para inferir só pelo repositório.
 | ------------------------------------------ | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | CI (lint, typecheck, test, build)          | `.github/workflows/ci.yml` com quatro jobs                                    | Último run verde em **Actions**                                         |
 | Security (Gitleaks, Semgrep, Snyk, CodeQL) | `.github/workflows/security.yml`                                              | Secrets `SEMGREP_APP_TOKEN`, `SNYK_TOKEN`; aba **Security** para CodeQL |
-| Deploy Vercel                              | `.github/workflows/deploy-web.yml` (`npx vercel@latest deploy --prod`)        | Secrets `VERCEL_*`; dashboard Vercel                                    |
+| Deploy Vercel                              | Integração nativa Vercel ↔ GitHub (Settings → Git; Root Directory `apps/web`) | Dashboard Vercel                                                        |
 | Fly sandbox-runner                         | `services/sandbox-runner/`, `deploy-services.yml`, `fly.toml` (scale-to-zero) | `GET /health` → **200** com `{"status":"ok",...}` (testado 2026-04-24)  |
 | Neon + branches + secrets                  | —                                                                             | Console Neon + GitHub Secrets + Fly secrets                             |
 | Domínio `api.*` → Fly                      | —                                                                             | DNS no provedor                                                         |
@@ -587,7 +557,7 @@ Marque no GitHub / consoles o que não dá para inferir só pelo repositório.
 
 - [x] CI rodando: lint, typecheck, test, build (workflow em `.github/workflows/ci.yml`)
 - [x] Security scan rodando: Gitleaks, Semgrep, Snyk, CodeQL (`.github/workflows/security.yml`)
-- [x] Vercel: workflow de deploy automático no `push` em `main` (paths `apps/web`, `packages`, lockfile)
+- [x] Vercel: integração nativa Vercel ↔ GitHub (Settings → Git; Root Directory `apps/web`)
 - [ ] Neon provisionado com branches `main`, `tcc-sad-ciberseguranca`, `honeypot-capture`, `threat-intel` (confirmar no console)
 - [ ] Connection strings do Neon em GitHub Secrets e Fly.io Secrets (confirmar nos dashboards)
 - [x] Fly.io com app `portfolio-sandbox-runner` deployado e scale-to-zero (`fly.toml`: `min_machines_running = 0`, checks em `/health`)
