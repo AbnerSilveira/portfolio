@@ -1,7 +1,11 @@
+"use client";
+
 import type { CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { HERO_INTRO_SESSION_KEY } from "@/lib/hero-intro-session";
 import { cn } from "@/lib/utils";
 
 type BootLine = {
@@ -20,7 +24,8 @@ const tone = {
   warn: "text-foreground/70",
 } as const;
 
-const bootLines: BootLine[] = [
+/** Linhas “brutas” da sequência de boot (segundos); comprimidas abaixo para ~45% menos tempo total. */
+const rawBootLines: BootLine[] = [
   {
     prompt: "~ $",
     text: "ssh abner@portfolio.es.br",
@@ -99,9 +104,51 @@ const bootLines: BootLine[] = [
   },
 ];
 
-const BOOT_FADE_DELAY = 7.7;
-const BOOT_FADE_DURATION = 1.0;
-const HERO_DELAY = BOOT_FADE_DELAY + 0.45;
+/** Quanto encolher a timeline do terminal (~0.55 ≈ metade do tempo; digitação um pouco mais lenta para ainda ler). */
+const BOOT_PACE = 0.54;
+const BOOT_DURATION_PACE = Math.min(0.82, BOOT_PACE + 0.22);
+
+function compressBootLines(lines: BootLine[], pace: number): BootLine[] {
+  return lines.map((l) => ({
+    ...l,
+    delay: Number((l.delay * pace).toFixed(3)),
+    duration: Math.max(
+      0.2,
+      Number((l.duration * BOOT_DURATION_PACE).toFixed(3)),
+    ),
+  }));
+}
+
+const bootLines = compressBootLines(rawBootLines, BOOT_PACE);
+
+const lastBootEnd = bootLines.reduce(
+  (max, l) => Math.max(max, l.delay + l.duration),
+  0,
+);
+const BOOT_FADE_DELAY = Number((lastBootEnd + 0.14).toFixed(2));
+const BOOT_FADE_DURATION = Math.max(0.55, 0.62 + BOOT_PACE * 0.35);
+/** Início do conteúdo principal (logo após o fade do bloco de boot). */
+const HERO_DELAY = Number((BOOT_FADE_DELAY + 0.32).toFixed(2));
+
+/** Escalonamento do hero após o boot (mesma ordem, menos espera entre passos). */
+const HERO_STAGGER = 0.58;
+const heroT = (offsetFromHero: number) =>
+  Number((HERO_DELAY + offsetFromHero * HERO_STAGGER).toFixed(2));
+
+/** Início / duração do typewriter da bio (para o cursor aparecer logo após o texto). */
+const HERO_BIO_TYPE_OFFSET = 4.31;
+const HERO_BIO_TYPE_DURATION = 1.42;
+const HERO_CURSOR_DELAY = Number(
+  (
+    HERO_DELAY +
+    HERO_BIO_TYPE_OFFSET * HERO_STAGGER +
+    HERO_BIO_TYPE_DURATION +
+    0.1
+  ).toFixed(2),
+);
+
+/** Após isso grava sessionStorage (fim do cursor + margem). */
+const HERO_INTRO_MARK_MS = Math.ceil((HERO_CURSOR_DELAY + 4.35 + 0.3) * 1000);
 
 const cssVars = (
   delay: number,
@@ -121,14 +168,43 @@ const showVars = (delay: number, duration = 0.6): CSSProperties =>
   }) as CSSProperties;
 
 export function Hero() {
+  const [skipIntro, setSkipIntro] = useState(false);
+
+  useLayoutEffect(() => {
+    try {
+      if (sessionStorage.getItem(HERO_INTRO_SESSION_KEY) === "1") {
+        setSkipIntro(true);
+      }
+    } catch {
+      /* storage indisponível */
+    }
+  }, []);
+
+  useEffect(() => {
+    if (skipIntro) return;
+    const id = window.setTimeout(() => {
+      try {
+        sessionStorage.setItem(HERO_INTRO_SESSION_KEY, "1");
+      } catch {
+        /* ignore */
+      }
+    }, HERO_INTRO_MARK_MS);
+    return () => clearTimeout(id);
+  }, [skipIntro]);
+
   return (
-    <section className="relative overflow-hidden bg-background pt-40 pb-20 sm:pt-48 sm:pb-24">
+    <section
+      className={cn(
+        "relative overflow-x-hidden bg-background pt-36 pb-16 sm:pt-44 sm:pb-20",
+        skipIntro && "hero-static",
+      )}
+    >
       <div className="relative mx-auto max-w-6xl px-6">
         <div
-          className="pointer-events-none absolute inset-y-0 right-0 hidden translate-x-6 items-center justify-center hero-show md:flex md:translate-x-12"
+          className="pointer-events-none absolute inset-y-0 right-0 hidden translate-x-6 items-center justify-center hero-deco-show md:flex md:translate-x-12"
           aria-hidden
           style={{
-            ...showVars(HERO_DELAY + 0.8, 1.2),
+            ...showVars(heroT(1.38), 0.82),
             width: "min(48vw, 560px)",
           }}
         >
@@ -143,51 +219,57 @@ export function Hero() {
           />
         </div>
 
-        <div
-          className="boot-fade mb-8 space-y-1 overflow-hidden font-mono text-xs sm:text-sm"
-          aria-hidden
-          style={
-            {
-              "--boot-fade-delay": `${BOOT_FADE_DELAY}s`,
-              "--boot-fade-duration": `${BOOT_FADE_DURATION}s`,
-            } as CSSProperties
-          }
-        >
-          {bootLines.map((line, i) => (
-            <div
-              key={i}
-              className="tw-row w-full"
-              style={{ "--tw-delay": `${line.delay}s` } as CSSProperties}
-            >
-              {line.prompt ? (
-                <span className="tw-prompt shrink-0">{line.prompt}</span>
-              ) : null}
-              <div className="min-w-0 flex-1">
-                <span
-                  className={cn(
-                    "tw-line block w-full",
-                    tone[line.tone ?? "muted"],
-                  )}
-                  style={cssVars(
-                    line.delay,
-                    line.duration,
-                    Math.max(8, line.text.length),
-                  )}
+        {skipIntro ? (
+          <div className="mb-5" aria-hidden />
+        ) : (
+          <div
+            className="boot-fade mb-5 overflow-hidden font-mono text-xs leading-normal sm:text-sm sm:leading-normal"
+            aria-hidden
+            style={
+              {
+                "--boot-fade-delay": `${BOOT_FADE_DELAY}s`,
+                "--boot-fade-duration": `${BOOT_FADE_DURATION}s`,
+              } as CSSProperties
+            }
+          >
+            <div className="boot-fade__inner">
+              {bootLines.map((line, i) => (
+                <div
+                  key={i}
+                  className="tw-row w-full"
+                  style={{ "--tw-delay": `${line.delay}s` } as CSSProperties}
                 >
-                  {line.text}
-                </span>
-              </div>
+                  {line.prompt ? (
+                    <span className="tw-prompt shrink-0">{line.prompt}</span>
+                  ) : null}
+                  <div className="min-w-0 flex-1">
+                    <span
+                      className={cn(
+                        "tw-line block w-full",
+                        tone[line.tone ?? "muted"],
+                      )}
+                      style={cssVars(
+                        line.delay,
+                        line.duration,
+                        Math.max(8, line.text.length),
+                      )}
+                    >
+                      {line.text}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
         <div
           className="tw-row mb-6 w-full font-mono text-xs text-muted-foreground sm:text-sm hero-show"
           aria-hidden
           style={
             {
-              ...showVars(HERO_DELAY, 0.4),
-              "--tw-delay": `${HERO_DELAY}s`,
+              ...showVars(heroT(0), 0.35),
+              "--tw-delay": `${heroT(0)}s`,
             } as CSSProperties
           }
         >
@@ -195,7 +277,7 @@ export function Hero() {
           <div className="min-w-0 flex-1">
             <span
               className="tw-line block w-full"
-              style={cssVars(HERO_DELAY, 0.4, 7)}
+              style={cssVars(heroT(0), 0.35, 7)}
             >
               whoami
             </span>
@@ -208,12 +290,12 @@ export function Hero() {
             fontSize: "clamp(3rem, 8vw, 4rem)",
             letterSpacing: "-0.01em",
             lineHeight: 1.05,
-            ...showVars(HERO_DELAY + 0.4, 0.5),
+            ...showVars(heroT(0.69), 0.44),
           }}
         >
           <span
             className="tw-line inline-block max-w-full"
-            style={cssVars(HERO_DELAY + 0.5, 0.9, 14)}
+            style={cssVars(heroT(0.86), 0.52, 14)}
           >
             Abner Silveira
           </span>
@@ -224,8 +306,8 @@ export function Hero() {
           aria-label="estudante de SI · full-stack developer · segurança ofensiva e defensiva"
           style={
             {
-              ...showVars(HERO_DELAY + 1.4, 0.4),
-              "--tw-delay": `${HERO_DELAY + 1.4}s`,
+              ...showVars(heroT(2.41), 0.34),
+              "--tw-delay": `${heroT(2.41)}s`,
             } as CSSProperties
           }
         >
@@ -235,7 +317,7 @@ export function Hero() {
           <div className="min-w-0 flex-1">
             <span
               className="tw-line block w-full"
-              style={cssVars(HERO_DELAY + 1.5, 0.9, 16)}
+              style={cssVars(heroT(2.59), 0.52, 16)}
             >
               cat about.txt
             </span>
@@ -247,35 +329,42 @@ export function Hero() {
           aria-hidden
           style={
             {
-              ...showVars(HERO_DELAY + 2.4, 0.4),
-              "--tw-delay": `${HERO_DELAY + 2.4}s`,
+              ...showVars(heroT(4.14), 0.34),
+              "--tw-delay": `${heroT(4.14)}s`,
             } as CSSProperties
           }
         >
-          <div className="min-w-0 flex-1">
+          <span className="inline-flex max-w-full items-baseline gap-1">
             <span
-              className="tw-line block w-full"
-              style={cssVars(HERO_DELAY + 2.5, 2.6, 70)}
+              className="tw-line inline-block max-w-full"
+              data-hero-bio
+              style={cssVars(
+                heroT(HERO_BIO_TYPE_OFFSET),
+                HERO_BIO_TYPE_DURATION,
+                70,
+              )}
             >
               estudante de SI · full-stack developer · segurança ofensiva e
               defensiva
             </span>
-          </div>
-          <span
-            className="tw-cursor--temp shrink-0"
-            style={
-              {
-                "--tw-cursor-delay": `${HERO_DELAY + 5.2}s`,
-                "--tw-cursor-life": "5s",
-              } as CSSProperties
-            }
-            aria-hidden
-          />
+            {!skipIntro ? (
+              <span
+                className="tw-cursor--temp shrink-0"
+                style={
+                  {
+                    "--tw-cursor-delay": `${HERO_CURSOR_DELAY}s`,
+                    "--tw-cursor-life": "4.2s",
+                  } as CSSProperties
+                }
+                aria-hidden
+              />
+            ) : null}
+          </span>
         </div>
 
         <div
           className="mt-10 flex flex-wrap items-center gap-3 hero-show"
-          style={showVars(HERO_DELAY + 1.0, 0.5)}
+          style={showVars(heroT(1.72), 0.42)}
         >
           <Link
             href="/#projetos"

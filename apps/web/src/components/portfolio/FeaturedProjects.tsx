@@ -22,8 +22,8 @@ export function FeaturedProjects() {
   const cards = [...real, ...fillers];
 
   return (
-    <section id="projetos" className="bg-background scroll-mt-20">
-      <div className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
+    <section id="projetos" className="scroll-mt-20 bg-background">
+      <div className="mx-auto max-w-6xl px-6 py-14 sm:py-20">
         <p className="mb-2 font-mono text-xs sm:text-sm">
           <span className="text-primary">~/portfolio</span>
           <span className="text-foreground"> $ </span>

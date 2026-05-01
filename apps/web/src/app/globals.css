@@ -259,7 +259,8 @@
 
   .tw-reveal {
     display: block;
-    overflow: hidden;
+    /* clip-path já recorta; overflow:hidden + flex-1 no card cortava a metade de baixo */
+    overflow: visible;
     opacity: 0;
     animation: typewriter-reveal var(--tw-duration, 1.4s)
       steps(var(--tw-steps, 30), end) var(--tw-delay, 0s) forwards;
@@ -329,39 +330,97 @@
     background-color: color-mix(in oklch, var(--card), white 6%);
   }
 
+  /*
+   * Slot baixo + fill-mode both: não empurra “Projetos em destaque”. Só px nos
+   * keyframes (interpola até 0 sem bug). __inner com flex-end = linhas novas no rodapé.
+   */
   .boot-fade {
+    max-height: 304px;
+    overflow: hidden;
     animation: boot-fade-out var(--boot-fade-duration, 1s)
-      ease-out var(--boot-fade-delay, 4s) forwards;
+      ease-out var(--boot-fade-delay, 4s) both;
+  }
+
+  .boot-fade__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    /* Espaço sob a última linha (line-box / descenders) antes do corte do max-height */
+    padding-bottom: 1rem;
   }
 
   @keyframes boot-fade-out {
     0% {
       opacity: 1;
-      max-height: 200px;
+      /* Mesmo teto que .boot-fade em px estável para interpolar até 0 */
+      max-height: 304px;
       margin-bottom: 2rem;
       filter: blur(0);
     }
     60% {
       opacity: 0;
-      max-height: 200px;
+      max-height: 304px;
+      margin-bottom: 2rem;
       filter: blur(2px);
     }
     100% {
       opacity: 0;
       max-height: 0;
       margin-bottom: 0;
+      padding-top: 0;
+      padding-bottom: 0;
       filter: blur(2px);
       pointer-events: none;
       visibility: hidden;
     }
   }
 
-  .hero-show {
+  /*
+   * Conteúdo pós-boot com .hero-show ficava visibility:hidden mas ainda ocupava
+   * altura (faixa vazia enorme). Colapsa com max-height até o delay.
+   * Boot só usa .tw-row (sem .hero-show) — não entra aqui.
+   */
+  .tw-row.hero-show {
+    max-height: 0;
+    min-height: 0;
+    overflow: hidden;
     opacity: 0;
+    visibility: hidden;
     animation:
+      hero-layout-expand 0.05s linear var(--hero-show-delay, 0s) both,
       hero-show-in var(--hero-show-duration, 0.6s) ease-out
         var(--hero-show-delay, 0s) forwards,
       tw-row-show 0s linear var(--hero-show-delay, 0s) forwards;
+  }
+
+  .hero-show:not(.tw-row) {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    animation:
+      hero-layout-expand 0.05s linear var(--hero-show-delay, 0s) both,
+      hero-show-in var(--hero-show-duration, 0.6s) ease-out
+        var(--hero-show-delay, 0s) forwards,
+      tw-row-show 0s linear var(--hero-show-delay, 0s) forwards;
+  }
+
+  .hero-deco-show {
+    opacity: 0;
+    animation: hero-show-in var(--hero-show-duration, 0.6s) ease-out
+      var(--hero-show-delay, 0s) forwards;
+  }
+
+  @keyframes hero-layout-expand {
+    from {
+      max-height: 0;
+      overflow: hidden;
+    }
+    to {
+      max-height: 28rem;
+      overflow: visible;
+    }
   }
 
   @keyframes hero-show-in {
@@ -373,6 +432,40 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* Hero já visto nesta aba (sessionStorage): sem boot/typewriter, sem mismatch visual pós-hidratação */
+  .hero-static .tw-row {
+    visibility: visible;
+    animation: none;
+  }
+
+  .hero-static .tw-line {
+    width: auto;
+    max-width: 100%;
+    overflow: visible;
+    animation: none;
+  }
+
+  .hero-static [data-hero-bio] {
+    white-space: normal;
+  }
+
+  .hero-static .tw-row.hero-show,
+  .hero-static .hero-show:not(.tw-row) {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+    visibility: visible;
+  }
+
+  .hero-static .hero-deco-show {
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 
   .navbar-scrolled {

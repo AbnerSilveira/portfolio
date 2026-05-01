@@ -1,5 +1,9 @@
+"use client";
+
+import type { CSSProperties } from "react";
 import type { ProjectMetadata } from "@portfolio/types";
 
+import { useInView } from "../hooks/use-in-view";
 import { cn } from "../lib/cn";
 
 export interface ProjectCardProps {
@@ -33,6 +37,27 @@ export function ProjectCard({
   "aria-label": ariaLabel,
 }: ProjectCardProps) {
   const to = href ?? `/projetos/${project.slug}`;
+  const { ref: descRef, inView } = useInView<HTMLParagraphElement>({
+    once: true,
+    rootMargin: "0px 0px -12% 0px",
+    threshold: 0.12,
+  });
+
+  const steps = String(Math.min(Math.max(project.description.length, 12), 96));
+  const durationSec = Math.min(
+    2.6,
+    Math.max(0.85, project.description.length * 0.02),
+  );
+
+  const revealStyle = (
+    inView
+      ? {
+          "--tw-delay": "0.05s",
+          "--tw-duration": `${durationSec}s`,
+          "--tw-steps": steps,
+        }
+      : {}
+  ) as CSSProperties;
 
   return (
     <a
@@ -67,13 +92,20 @@ export function ProjectCard({
           </h3>
         </header>
 
-        <p className="min-h-0 flex-1 text-xs leading-relaxed text-muted-foreground sm:text-[13px] sm:leading-relaxed">
+        <p
+          ref={descRef}
+          className={cn(
+            "min-w-0 shrink-0 text-xs leading-relaxed text-muted-foreground sm:text-[13px] sm:leading-relaxed",
+            inView ? "tw-reveal" : "opacity-0",
+          )}
+          style={revealStyle}
+        >
           {project.description}
         </p>
       </div>
 
       {project.tags.length > 0 ? (
-        <ul className="flex flex-wrap gap-x-2.5 gap-y-1 font-mono text-[11px] leading-normal tracking-wide text-muted-foreground sm:text-xs sm:leading-normal">
+        <ul className="mt-auto flex flex-wrap gap-x-2.5 gap-y-1 font-mono text-[11px] leading-normal tracking-wide text-muted-foreground sm:text-xs sm:leading-normal">
           {project.tags.map((t) => (
             <li key={t}>
               <span className="text-primary">--</span>

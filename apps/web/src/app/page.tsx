@@ -1,11 +1,5 @@
-import { FeaturedProjects } from "@/components/portfolio/FeaturedProjects";
-import { Hero } from "@/components/portfolio/Hero";
+import { HomePageContent } from "@/components/portfolio/HomePageContent";
 
 export default function HomePage() {
-  return (
-    <main>
-      <Hero />
-      <FeaturedProjects />
-    </main>
-  );
+  return <HomePageContent />;
 }
