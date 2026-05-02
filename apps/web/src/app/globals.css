@@ -1,82 +1,127 @@
 @import "tailwindcss";
+
+/* Garante utilities usadas em @portfolio/ui (ex.: ProjectCard) no bundle do web */
+@source "../../../../packages/ui/src/**/*.tsx";
+
 @import "@portfolio/config-tailwind/theme.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
+/* Design system — ver docs/UI-portifolio-teste/design-system.md */
+
 :root {
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(0.93 0.04 95);
+  --foreground: oklch(0.28 0.02 50);
+  --card: oklch(0.97 0.02 95);
+  --card-foreground: oklch(0.28 0.02 50);
+  --popover: oklch(0.97 0.02 95);
+  --popover-foreground: oklch(0.28 0.02 50);
+  --primary: oklch(0.42 0.15 275);
+  --primary-foreground: oklch(0.97 0.02 95);
+  --secondary: oklch(0.89 0.03 90);
+  --secondary-foreground: oklch(0.28 0.02 50);
+  --muted: oklch(0.91 0.03 90);
+  --muted-foreground: oklch(0.35 0.03 70);
+  --accent: oklch(0.91 0.04 275);
+  --accent-foreground: oklch(0.42 0.15 275);
+  --destructive: oklch(0.48 0.15 25);
+  --warning: oklch(0.55 0.12 75);
+  --border: oklch(0.35 0.02 50 / 0.15);
+  --input: oklch(0.35 0.02 50 / 0.2);
+  --ring: oklch(0.42 0.15 275);
+  --radius: 0.5rem;
+  --chart-1: oklch(0.42 0.15 275);
+  --chart-2: oklch(0.55 0.12 75);
+  --chart-3: oklch(0.48 0.15 25);
+  --chart-4: oklch(0.35 0.03 70);
+  --chart-5: oklch(0.89 0.03 90);
+  --sidebar: oklch(0.97 0.02 95);
+  --sidebar-foreground: oklch(0.28 0.02 50);
+  --sidebar-primary: oklch(0.42 0.15 275);
+  --sidebar-primary-foreground: oklch(0.97 0.02 95);
+  --sidebar-accent: oklch(0.91 0.04 275);
+  --sidebar-accent-foreground: oklch(0.42 0.15 275);
+  --sidebar-border: oklch(0.35 0.02 50 / 0.15);
+  --sidebar-ring: oklch(0.42 0.15 275);
+  /* Pontos de impacto nos cards (listing) — leitura clara sobre fundo claro */
+  --project-impact-high: oklch(0.48 0.12 27);
+  --project-impact-medium: oklch(0.52 0.1 65);
+  --project-impact-low: oklch(0.44 0.11 275);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: oklch(0.12 0.045 270);
+  --foreground: oklch(0.93 0.03 270);
+  /* Repouso: levemente mais claro que o fundo; hover clareia mais */
+  --card: oklch(0.152 0.046 270);
+  --card-foreground: oklch(0.93 0.03 270);
+  --popover: oklch(0.152 0.046 270);
+  --popover-foreground: oklch(0.93 0.03 270);
+  --primary: oklch(0.68 0.17 275);
+  --primary-foreground: oklch(0.15 0.04 270);
+  --secondary: oklch(0.25 0.04 270);
+  --secondary-foreground: oklch(0.93 0.03 270);
+  --muted: oklch(0.25 0.04 270);
+  --muted-foreground: oklch(0.75 0.04 270);
+  --accent: oklch(0.28 0.06 275);
+  --accent-foreground: oklch(0.93 0.03 270);
+  --destructive: oklch(0.72 0.18 25);
+  --warning: oklch(0.82 0.15 55);
+  --border: oklch(0.68 0.17 275 / 0.15);
+  --input: oklch(0.68 0.17 275 / 0.2);
+  --ring: oklch(0.68 0.17 275);
+  --chart-1: oklch(0.68 0.17 275);
+  --chart-2: oklch(0.82 0.15 55);
+  --chart-3: oklch(0.72 0.18 25);
+  --chart-4: oklch(0.75 0.04 270);
+  --chart-5: oklch(0.25 0.04 270);
+  --sidebar: oklch(0.12 0.045 270);
+  --sidebar-foreground: oklch(0.93 0.03 270);
+  --sidebar-primary: oklch(0.68 0.17 275);
+  --sidebar-primary-foreground: oklch(0.15 0.04 270);
+  --sidebar-accent: oklch(0.28 0.06 275);
+  --sidebar-accent-foreground: oklch(0.93 0.03 270);
+  --sidebar-border: oklch(0.68 0.17 275 / 0.15);
+  --sidebar-ring: oklch(0.68 0.17 275);
+  /* Pontos nos cards (sobre --card escuro): vermelho/laranja/azul bem legíveis */
+  --project-impact-high: oklch(0.58 0.14 27);
+  --project-impact-medium: oklch(0.78 0.1 58);
+  --project-impact-low: oklch(0.72 0.12 275);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.dark) {
+    --background: oklch(0.12 0.045 270);
+    --foreground: oklch(0.93 0.03 270);
+    --card: oklch(0.152 0.046 270);
+    --card-foreground: oklch(0.93 0.03 270);
+    --popover: oklch(0.152 0.046 270);
+    --popover-foreground: oklch(0.93 0.03 270);
+    --primary: oklch(0.68 0.17 275);
+    --primary-foreground: oklch(0.15 0.04 270);
+    --secondary: oklch(0.25 0.04 270);
+    --secondary-foreground: oklch(0.93 0.03 270);
+    --muted: oklch(0.25 0.04 270);
+    --muted-foreground: oklch(0.75 0.04 270);
+    --accent: oklch(0.28 0.06 275);
+    --accent-foreground: oklch(0.93 0.03 270);
+    --destructive: oklch(0.72 0.18 25);
+    --warning: oklch(0.82 0.15 55);
+    --border: oklch(0.68 0.17 275 / 0.15);
+    --input: oklch(0.68 0.17 275 / 0.2);
+    --ring: oklch(0.68 0.17 275);
+    --project-impact-high: oklch(0.58 0.14 27);
+    --project-impact-medium: oklch(0.78 0.1 58);
+    --project-impact-low: oklch(0.72 0.12 275);
+  }
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
+  --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -94,6 +139,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-warning: var(--warning);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -121,10 +167,333 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: clip;
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
   body {
     @apply bg-background text-foreground;
   }
-  html {
-    @apply font-sans;
+}
+
+@layer components {
+  .tw-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    min-height: 1.4em;
+    visibility: hidden;
+    animation: tw-row-show 0s linear var(--tw-delay, 0s) forwards;
+  }
+
+  @keyframes tw-row-show {
+    to {
+      visibility: visible;
+    }
+  }
+
+  .tw-prompt {
+    color: var(--primary);
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .tw-line {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: baseline;
+    width: 0;
+    animation: typewriter-type var(--tw-duration, 1.2s)
+      steps(var(--tw-steps, 28), end) var(--tw-delay, 0s) forwards;
+  }
+
+  /*
+   * Texto intrínseco + max-width em steps: a caixa não ocupa 100% da linha, então o
+   * cursor (irmão em inline-flex) fica colado ao fim do texto, não no fim do viewport.
+   */
+  .tw-line.tw-line--fit {
+    width: max-content;
+    max-width: 0;
+    animation: typewriter-fit-max var(--tw-duration, 1.2s)
+      steps(var(--tw-steps, 28), end) var(--tw-delay, 0s) forwards;
+  }
+
+  @keyframes typewriter-fit-max {
+    to {
+      max-width: min(100%, 92ch);
+    }
+  }
+
+  .tw-cursor--temp {
+    display: inline-block;
+    width: 0.5em;
+    height: 0.95em;
+    margin-left: 2px;
+    background-color: var(--primary);
+    transform: translateY(0.1em);
+    opacity: 0;
+    animation:
+      typewriter-cursor-temp var(--tw-cursor-life, 5s) linear
+        var(--tw-cursor-delay, 0s) forwards,
+      typewriter-blink 0.9s step-end var(--tw-cursor-delay, 0s)
+        var(--tw-cursor-blinks, 5);
+  }
+
+  @keyframes typewriter-type {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+
+  @keyframes typewriter-blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes typewriter-cursor-temp {
+    0% {
+      opacity: 1;
+    }
+    95% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .tw-reveal {
+    display: block;
+    /* clip-path já recorta; overflow:hidden + flex-1 no card cortava a metade de baixo */
+    overflow: visible;
+    opacity: 0;
+    animation: typewriter-reveal var(--tw-duration, 1.4s)
+      steps(var(--tw-steps, 30), end) var(--tw-delay, 0s) forwards;
+  }
+
+  @keyframes typewriter-reveal {
+    0% {
+      clip-path: inset(0 100% 0 0);
+      opacity: 1;
+    }
+    100% {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+    }
+  }
+
+  /*
+   * Pontos de impacto: tudo em CSS fixo — utilities no @portfolio/ui (size-3,
+   * rounded-full, shrink-0) não entram no bundle e o span virava “risco” fino no flex.
+   */
+  .project-card-impact-dot {
+    display: block;
+    flex-shrink: 0;
+    width: 0.625rem;
+    height: 0.625rem;
+    margin-top: 0;
+    border-radius: 9999px;
+  }
+
+  .project-card-impact-dot--high {
+    background-color: var(--project-impact-high);
+  }
+
+  .project-card-impact-dot--medium {
+    background-color: var(--project-impact-medium);
+  }
+
+  .project-card-impact-dot--low {
+    background-color: var(--project-impact-low);
+  }
+
+  .project-card {
+    /* Cor de repouso: token --card (não usar hover para “clarear” o painel) */
+    background-color: var(--card);
+    transition:
+      transform 0.22s ease,
+      border-color 0.22s ease,
+      background-color 0.22s ease;
+  }
+
+  .project-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklch, var(--primary) 55%, transparent);
+  }
+
+  .dark .project-card:hover {
+    background-color: color-mix(in oklch, var(--card) 91%, var(--foreground) 9%);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light):not(.dark) .project-card:hover {
+      background-color: color-mix(in oklch, var(--card) 91%, var(--foreground) 9%);
+    }
+  }
+
+  .light .project-card:hover {
+    background-color: color-mix(in oklch, var(--card), white 6%);
+  }
+
+  /*
+   * Slot do boot: teto único em px (keyframes). ~320px cobre 13 linhas + gaps + descenders
+   * em text-sm sem cortar a última sequência (clear/whoami).
+   */
+  .boot-fade {
+    --boot-slot-max: 320px;
+    max-height: var(--boot-slot-max);
+    overflow: hidden;
+    isolation: isolate;
+    animation: boot-fade-out var(--boot-fade-duration, 1s)
+      ease-out var(--boot-fade-delay, 4s) both;
+  }
+
+  .boot-fade__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.2rem;
+    /* Espaço sob a última linha (line-box / descenders) antes do corte do max-height */
+    padding-bottom: 1rem;
+  }
+
+  @keyframes boot-fade-out {
+    0% {
+      opacity: 1;
+      max-height: var(--boot-slot-max, 320px);
+      margin-bottom: 1.25rem;
+      filter: blur(0);
+    }
+    60% {
+      opacity: 0;
+      max-height: var(--boot-slot-max, 320px);
+      margin-bottom: 1.25rem;
+      filter: blur(2px);
+    }
+    100% {
+      opacity: 0;
+      max-height: 0;
+      margin-bottom: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      filter: blur(2px);
+      pointer-events: none;
+      visibility: hidden;
+    }
+  }
+
+  /*
+   * Conteúdo pós-boot com .hero-show ficava visibility:hidden mas ainda ocupava
+   * altura (faixa vazia enorme). Colapsa com max-height até o delay.
+   * Boot só usa .tw-row (sem .hero-show) — não entra aqui.
+   */
+  .tw-row.hero-show {
+    max-height: 0;
+    min-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    animation:
+      hero-layout-expand 0.05s linear var(--hero-show-delay, 0s) both,
+      hero-show-in var(--hero-show-duration, 0.6s) ease-out
+        var(--hero-show-delay, 0s) forwards,
+      tw-row-show 0s linear var(--hero-show-delay, 0s) forwards;
+  }
+
+  .hero-show:not(.tw-row) {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    animation:
+      hero-layout-expand 0.05s linear var(--hero-show-delay, 0s) both,
+      hero-show-in var(--hero-show-duration, 0.6s) ease-out
+        var(--hero-show-delay, 0s) forwards,
+      tw-row-show 0s linear var(--hero-show-delay, 0s) forwards;
+  }
+
+  .hero-deco-show {
+    opacity: 0;
+    animation: hero-show-in var(--hero-show-duration, 0.6s) ease-out
+      var(--hero-show-delay, 0s) forwards;
+  }
+
+  @keyframes hero-layout-expand {
+    from {
+      max-height: 0;
+      overflow: hidden;
+    }
+    to {
+      max-height: 28rem;
+      overflow: visible;
+    }
+  }
+
+  @keyframes hero-show-in {
+    0% {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Hero já visto nesta aba (sessionStorage): sem boot/typewriter, sem mismatch visual pós-hidratação */
+  .hero-static .tw-row {
+    visibility: visible;
+    animation: none;
+  }
+
+  .hero-static .tw-line {
+    width: auto;
+    max-width: 100%;
+    overflow: visible;
+    animation: none;
+  }
+
+  .hero-static .tw-line.tw-line--fit {
+    max-width: none;
+  }
+
+  .hero-static [data-hero-bio] {
+    white-space: normal;
+  }
+
+  .hero-static .tw-row.hero-show,
+  .hero-static .hero-show:not(.tw-row) {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+    visibility: visible;
+  }
+
+  .hero-static .hero-deco-show {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .navbar-scrolled {
+    background-color: color-mix(in oklch, var(--background) 70%, transparent);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
   }
 }
