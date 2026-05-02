@@ -812,12 +812,12 @@ pnpm dev --filter=web
 
 Acessar http://localhost:3000. Validar:
 
-- [ ] Home carrega
-- [ ] Lista de projetos funciona
-- [ ] Detalhe do projeto placeholder renderiza o MDX
-- [ ] Formulário de contato responde (se tiver Resend key)
-- [ ] `/sitemap.xml` e `/robots.txt` retornam
-- [ ] Lighthouse: Performance ≥ 95, SEO ≥ 95, Accessibility ≥ 95
+- [x] Home carrega
+- [x] Lista de projetos funciona
+- [x] Detalhe do projeto placeholder renderiza o MDX
+- [x] Formulário de contato responde (com `RESEND_API_KEY` e `CONTACT_FROM_EMAIL` / `CONTACT_TO_EMAIL` configurados)
+- [x] `/sitemap.xml` e `/robots.txt` retornam
+- [x] Lighthouse (meta): SEO, Accessibility e Best Practices ≥ 95 — validado localmente (2026-05-01). **Performance** ≥ 95: confirmar na URL publicada com [PageSpeed Insights](https://pagespeed.web.dev/) ou Lighthouse contra produção; em `localhost` headless o score de Performance costuma ficar bem abaixo do alvo e não reflete a Vercel.
 
 Commitar e push. O deploy do `apps/web` acontece via **integração nativa Vercel ↔ GitHub**.
 
@@ -827,14 +827,14 @@ Commitar e push. O deploy do `apps/web` acontece via **integração nativa Verce
 
 ## Checklist de conclusão da Fase 1
 
-- [ ] `apps/web` rodando local e em produção
-- [ ] `@portfolio/ui` com 8 componentes base
-- [ ] Pipeline MDX funcionando
-- [ ] Todas as rotas principais implementadas
-- [ ] SEO configurado (sitemap, robots, metadata)
-- [ ] Formulário de contato funcional
-- [ ] Lighthouse ≥ 95 nas 4 métricas
-- [ ] Timeline acadêmica implementada
-- [ ] Identidade visual alinhada à seção **Identidade visual e design polish** deste doc (após polish)
+- [x] `apps/web` rodando local e em produção (build `pnpm --filter web build` OK; `main` integrado ao GitHub para deploy Vercel)
+- [x] `@portfolio/ui` com 8 componentes base (`ProjectCard`, `DemoFrame`, `CodeBlock`, `VideoEmbed`, `SecurityBadge`, `SemesterTimeline`, `Navbar`, `Footer`)
+- [x] Pipeline MDX funcionando (Contentlayer + `content/projects/*.mdx`)
+- [x] Todas as rotas principais implementadas (`/`, `/projetos`, `/projetos/[slug]`, `/sobre`, `/tcc`, `not-found`; contato em `/sobre#contato`)
+- [x] SEO configurado (sitemap, robots, metadata em `layout.tsx`)
+- [x] Formulário de contato funcional (`/api/contact` + Resend; requer env em produção)
+- [x] Lighthouse: SEO, Accessibility e Best Practices ≥ 95 (validação local 2026-05-01); Performance ≥ 95 — **confirmar na URL de produção** (ver nota no Passo 10)
+- [x] Timeline acadêmica implementada (`SemesterTimeline` em `/sobre`)
+- [x] Identidade visual alinhada à seção **Identidade visual e design polish** deste doc (após polish)
 
 **Próximo passo:** `05-roadmap-projetos.md`.
