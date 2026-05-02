@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -147,8 +147,8 @@ const HERO_CURSOR_DELAY = Number(
   ).toFixed(2),
 );
 
-/** Após isso grava sessionStorage (fim do cursor + margem). */
-const HERO_INTRO_MARK_MS = Math.ceil((HERO_CURSOR_DELAY + 4.35 + 0.3) * 1000);
+/** Igual a `--tw-cursor-life` no span do cursor (globals: typewriter-cursor-temp). */
+const HERO_CURSOR_LIFE_S = 4.2;
 
 const cssVars = (
   delay: number,
@@ -174,23 +174,17 @@ export function Hero() {
     try {
       if (sessionStorage.getItem(HERO_INTRO_SESSION_KEY) === "1") {
         setSkipIntro(true);
+        return;
       }
+      /*
+       * Grava já nesta primeira visita à home na aba: navegação rápida não perde a chave.
+       * Não chama setSkipIntro(true) — a animação deste mount segue até o fim.
+       */
+      sessionStorage.setItem(HERO_INTRO_SESSION_KEY, "1");
     } catch {
       /* storage indisponível */
     }
   }, []);
-
-  useEffect(() => {
-    if (skipIntro) return;
-    const id = window.setTimeout(() => {
-      try {
-        sessionStorage.setItem(HERO_INTRO_SESSION_KEY, "1");
-      } catch {
-        /* ignore */
-      }
-    }, HERO_INTRO_MARK_MS);
-    return () => clearTimeout(id);
-  }, [skipIntro]);
 
   return (
     <section
@@ -354,7 +348,7 @@ export function Hero() {
                   style={
                     {
                       "--tw-cursor-delay": `${HERO_CURSOR_DELAY}s`,
-                      "--tw-cursor-life": "4.2s",
+                      "--tw-cursor-life": `${HERO_CURSOR_LIFE_S}s`,
                     } as CSSProperties
                   }
                   aria-hidden
