@@ -1,6 +1,6 @@
 @theme inline {
   /* Tokens semânticos vivem em apps/web/src/app/globals.css (:root / .dark).
-     Referência: docs/UI-portifolio-teste/design-system.md */
+     Referência: docs/04-portfolio-publico.md (seção identidade visual) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);

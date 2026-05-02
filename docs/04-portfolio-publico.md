@@ -6,6 +6,192 @@ Uso recomendado: **Cursor** para a estrutura e lógica, **Lovable** quando quise
 
 ---
 
+## Identidade visual e design polish
+
+Tudo que antes estava em `design-system.md` e `07-design-polish.md` vive **nesta seção** do `04-portfolio-publico.md`. Não substitui os passos técnicos abaixo (bootstrap, MDX, SEO); complementa paleta, hero, cards e fluxo Lovable → Cursor.
+
+**Onde está no código:** `packages/config-tailwind/theme.css` e `apps/web/src/app/globals.css` (Tailwind v4 + shadcn). Evoluções visuais devem respeitar a **parte A** desta seção.
+
+### A — Design system (referência visual)
+
+Fonte da verdade da identidade visual do `apps/web`. Decisões da sprint de polish (Fase 1.5). Fase 2+ consulta esta subseção para consistência.
+
+#### Filosofia (visual)
+
+Estética de cibersegurança moderna sem cair em kitsch ("hacker de filme"). Inspirações: Linear, Vercel, dashboards SOC modernos, Solarized. Identidade carregada por monospace pontual + acento periwinkle, não por chuva de código de fundo.
+
+#### Modo de cor
+
+Respeita `prefers-color-scheme` do visitante. Toggle manual pode vir depois sem retrabalho de tokens.
+
+Referência de mapeamento em `packages/config-tailwind/theme.css` (exemplo conceitual — o repo pode usar oklch em `globals.css`):
+
+```css
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+}
+
+:root {
+  /* Light mode (default) — papel envelhecido */
+  --background: #f6ecd4;
+  --foreground: #2a2520;
+  --muted: #544a3d;
+  --accent: #3d4ba8;
+  --card: #fdf7e6;
+  --border: rgba(61, 53, 42, 0.15);
+  --border-hover: rgba(61, 75, 168, 0.55);
+  --danger: #a63d3d;
+  --warning: #946817;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode — cyber azul profundo */
+    --background: #0a0e1a;
+    --foreground: #e0e8ff;
+    --muted: rgba(224, 232, 255, 0.65);
+    --accent: #7c93ff;
+    --card: rgba(124, 147, 255, 0.04);
+    --border: rgba(124, 147, 255, 0.15);
+    --border-hover: rgba(124, 147, 255, 0.55);
+    --danger: #ff7b7b;
+    --warning: #ffb86b;
+  }
+}
+```
+
+#### Paleta — referência rápida
+
+| Token        | Light (default)              | Dark                          |
+| ------------ | ---------------------------- | ----------------------------- |
+| background   | `#f6ecd4` papel envelhecido  | `#0a0e1a` cyber azul profundo |
+| foreground   | `#2a2520` marrom-quase-preto | `#e0e8ff` branco-azulado      |
+| muted        | `#544a3d`                    | `rgba(224,232,255,0.65)`      |
+| accent       | `#3d4ba8` periwinkle deep    | `#7c93ff` periwinkle vibrante |
+| card         | `#fdf7e6`                    | `rgba(124,147,255,0.04)`      |
+| border       | `rgba(61,53,42,0.15)`        | `rgba(124,147,255,0.15)`      |
+| border-hover | `rgba(61,75,168,0.55)`       | `rgba(124,147,255,0.55)`      |
+| danger       | `#a63d3d`                    | `#ff7b7b`                     |
+| warning      | `#946817`                    | `#ffb86b`                     |
+
+Os pares accent/danger/warning partilham hue entre modos — só luminância muda.
+
+#### Tipografia
+
+- **Geist Sans** — corpo, títulos, navegação (`next/font` em `layout.tsx`). Pesos: 400, 500, 600 (semibold em títulos grandes).
+- **Geist Mono** — hero terminal, badges, código MDX, métricas. Pesos: 400, 500.
+
+Regra: monospace é pontual; nunca mono em prosa longa, listas ou navegação principal.
+
+#### Layout
+
+- **Radius:** cards `rounded-lg` (8px); seções `rounded-xl` (12px); inputs/botões `rounded-md` (6px).
+- **Sombras:** sem `box-shadow` colorido em hover (borda + translação). Sombras neutras só em modais/popovers se necessário.
+- **Espaçamento:** hero e seções principais `py-16` desktop / `py-12` mobile; cards `p-4` a `p-5`.
+
+#### Detalhes de personalidade (máx. 3; não expandir sem decisão)
+
+**1. Typewriter no subtítulo do Hero** — Nome em sans grande estático; subtítulo em mono letra a letra; cursor bloco `accent` ~0.5em×0.95em; blink step-end; fade do cursor após ~5s. Nome não animado (SEO/legibilidade). Só CSS keyframes, sem Framer.
+
+**2. Hover sóbrio em cards** — Sem glow: borda `border` → `border-hover`, tint no fundo (dark: card 4% → 9% mix), `translateY(-2px)`, `transition 0.22s ease`.
+
+**3. Badges de impacto** — Listing `/projetos`: ponto 8px ao lado do título (danger / warning / muted). Detalhe `/projetos/[slug]`: badge terminal `[ALTO]` / `[MÉDIO]` / `[BAIXO]` em mono. Sem pills coloridas; sem formato terminal no listing denso.
+
+#### Princípios de validação (≤2 min por rota)
+
+1. Hierarquia clara — um elemento dominante por seção?
+2. Contraste WCAG AA — ≥4.5:1 normal, ≥3:1 large?
+3. Densidade vs respiro?
+4. Consistência com outras rotas?
+5. Simplicidade — algo pode sair sem piorar? Em dúvida, tirar.
+
+#### Validação concreta
+
+Testar paleta em realtimecolors.com (`#f6ecd4` / `#0a0e1a`, texto `#2a2520` / `#e0e8ff`, primary `#3d4ba8` / `#7c93ff`). Lighthouse por rota: meta **95+** nas quatro métricas (Performance 95–99 com fontes custom aceitável).
+
+#### Anti-padrões (UI)
+
+- Cores hardcoded no JSX — usar tokens.
+- Pills coloridas para status — ponto ou badge terminal conforme contexto.
+- Glow colorido; fundo com dots/scanlines; Framer só por “detalhe”; mono em prosa longa; light/dark com hues divergentes por token.
+
+#### Inspirações
+
+Linear, Vercel, Solarized Light, GitHub Dark, Snyk / Wiz / Tailscale.
+
+### B — Sprint de design polish (Lovable + Cursor)
+
+Sprint curta (≈2–4 h) para sair do default Tailwind e dar personalidade **antes** da Fase 2. Não é DS completo. O comentário em `02-setup-monorepo.md` (tokens a ajustar após identidade) cumpre-se aqui e na **parte A**.
+
+#### Pré-requisitos
+
+- CI verde; site em produção acessível; Lovable + Cursor disponíveis.
+
+#### Filosofia do polish
+
+Não é redesign zero: trocar casca (paleta, tipo, espaçamento) em Hero, ProjectCard, timeline, formulário. Workflow: `docs/workflow/daily-workflow.md` — Lovable ~70%, Cursor ~30%. Direção: cyber elegante (SOC, Snyk/Wiz/Tailscale, Warp/Ghostty), sem kitsch Matrix.
+
+#### Passo polish 1 — Direção (~15 min)
+
+**Paleta (escolher uma base):** (A) terminal verde `#0a0e0a` / `#e0f0e0` / acentos verde; (B) cyber azul `#0a0e1a` / `#e0e8ff` / cyan ou `#7c93ff`; (C) carbon `#0d1117` / `#c9d1d9` / laranja ou roxo. **Tipo:** sans (Inter, Geist, Satoshi) + mono (JetBrains, Geist Mono); default recomendado **Geist Sans + Geist Mono**. **Detalhes (1–3):** cursor no hero, typewriter subtítulo, badges terminal, etc. Evitar Matrix rain, glitch pesado, neon a piscar tudo.
+
+#### Passo polish 2 — Lovable (~45–60 min)
+
+Prompt inicial (adaptar paleta/tipo escolhidos): Next 16, Tailwind v4, shadcn; navbar fixa blur (Projetos, TCC, Sobre); hero nome + subtítulo + 2 CTAs; seção destaque grid 3 col responsive + cards com impacto; footer mínimo. Referências: GitHub Dark, Vercel, SOC. Sem emojis; sem chuva de código.
+
+Iterações típicas: “reduzir título hero”; “cards com matéria/semestre”; “paleta consistente em secundários”; “cursor após nome”.
+
+#### Passo polish 3 — Cursor (~60–90 min)
+
+Mapear Lovable → `Hero.tsx`, `ProjectCard.tsx`, `layout.tsx`. Obrigatório: Tailwind v4 tokens em `theme.css` / `globals.css`, não `bg-[#…]` solto; shadcn primitivos em `components/ui/`, domínio em `components/portfolio` ou equivalente; `@base-ui` em vez de Radix se Lovable errar; `<Link>` do Next; dados reais Contentlayer; `next/font` para Geist; WCAG.
+
+```powershell
+pnpm --filter web lint
+pnpm --filter web typecheck
+pnpm --filter web build
+pnpm --filter web dev
+```
+
+Lighthouse: manter scores altos; se contraste falhar, corrigir antes do commit.
+
+#### Passo polish 4 — Outras rotas (~30 min)
+
+`/projetos`, `/projetos/[slug]` (prose dark), `/sobre`, `/tcc`, `not-found`.
+
+#### Passo polish 5 — Commits
+
+Commits pequenos sugeridos: fontes → theme → hero/home → ProjectCard → restantes rotas; Conventional Commits; validar antes de push.
+
+#### Passo polish 6 — Documentar
+
+Atualizar a **parte A** desta seção com decisões finais (paleta real, pesos, tokens). Atualizar comentário em `packages/config-tailwind/theme.css` para apontar a **`docs/04-portfolio-publico.md` (seção identidade visual)**.
+
+#### Critérios de pronto (polish)
+
+- Identidade coerente em produção; paleta nas 5 rotas principais; Lighthouse 95+ (tolerância performance); mobile+desktop; **parte A** atualizada; comentário de tokens resolvido; commits validados.
+
+#### Anti-padrões (sprint polish)
+
+Não mexer em rotas/API/Contentlayer “de brinde”; não adicionar Framer só por animação; não DS completo infinito; não `--no-verify`; não trocar shadcn por outra lib.
+
+#### Tempo total estimado
+
+~3–4 h (uma sessão ou duas de 1,5–2 h).
+
+#### Depois do polish
+
+Seguir `05-roadmap-projetos.md` (Fase 2); novos projetos alinham à **parte A** deste documento.
+
+---
+
 ## Passo 1 — Bootstrap do Next.js
 
 ```bash
@@ -59,7 +245,9 @@ Ajustar `tsconfig.json`:
 }
 ```
 
-> **Tailwind v4 (CSS-first):** este monorepo usa Tailwind 4. Não há `tailwind.config.ts` por padrão.\n+>\n+> Em vez disso, o tema/tokens compartilhados ficam em `@portfolio/config-tailwind/theme.css` e são importados no `globals.css`.
+> **Tailwind v4 (CSS-first):** este monorepo usa Tailwind 4. Não há `tailwind.config.ts` por padrão.
+>
+> Em vez disso, o tema/tokens compartilhados ficam em `@portfolio/config-tailwind/theme.css` e são importados no `globals.css`.
 
 Atualizar `src/app/globals.css`:
 
@@ -138,7 +326,9 @@ cd ../../apps/web
 pnpm dlx shadcn@latest init --defaults
 ```
 
-Escolher as opções padrão. O `init` vai criar `components.json`, `src/lib/utils.ts` e componentes iniciais (ex.: `Button`).\n+\n+**Ajuste recomendado no monorepo:** em `src/lib/utils.ts`, reexportar `cn` do pacote `@portfolio/ui` para evitar duplicação.
+Escolher as opções padrão. O `init` vai criar `components.json`, `src/lib/utils.ts` e componentes iniciais (ex.: `Button`).
+
+**Ajuste recomendado no monorepo:** em `src/lib/utils.ts`, reexportar `cn` do pacote `@portfolio/ui` para evitar duplicação.
 
 ---
 
@@ -645,5 +835,6 @@ Commitar e push. O deploy do `apps/web` acontece via **integração nativa Verce
 - [ ] Formulário de contato funcional
 - [ ] Lighthouse ≥ 95 nas 4 métricas
 - [ ] Timeline acadêmica implementada
+- [ ] Identidade visual alinhada à seção **Identidade visual e design polish** deste doc (após polish)
 
 **Próximo passo:** `05-roadmap-projetos.md`.

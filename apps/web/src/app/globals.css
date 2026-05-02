@@ -9,7 +9,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Design system — ver docs/UI-portifolio-teste/design-system.md */
+/* Design system — ver docs/04-portfolio-publico.md (identidade visual e design polish) */
 
 :root {
   --background: oklch(0.93 0.04 95);
