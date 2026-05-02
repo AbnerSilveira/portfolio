@@ -195,7 +195,7 @@ export function Hero() {
   return (
     <section
       className={cn(
-        "relative overflow-x-hidden bg-background pt-36 pb-16 sm:pt-44 sm:pb-20",
+        "relative overflow-x-clip bg-background pt-36 pb-16 sm:pt-44 sm:pb-20",
         skipIntro && "hero-static",
       )}
     >
@@ -325,7 +325,7 @@ export function Hero() {
         </div>
 
         <div
-          className="tw-row mt-2 w-full font-mono text-sm text-foreground sm:text-base hero-show"
+          className="tw-row mt-2 w-full min-w-0 font-mono text-sm text-foreground sm:text-base hero-show"
           aria-hidden
           style={
             {
@@ -334,32 +334,34 @@ export function Hero() {
             } as CSSProperties
           }
         >
-          <span className="inline-flex max-w-full items-baseline gap-1">
-            <span
-              className="tw-line inline-block max-w-full"
-              data-hero-bio
-              style={cssVars(
-                heroT(HERO_BIO_TYPE_OFFSET),
-                HERO_BIO_TYPE_DURATION,
-                70,
-              )}
-            >
-              estudante de SI · full-stack developer · segurança ofensiva e
-              defensiva
-            </span>
-            {!skipIntro ? (
+          <div className="min-w-0 flex-1">
+            <span className="inline-flex min-w-0 max-w-full items-baseline gap-1">
               <span
-                className="tw-cursor--temp shrink-0"
-                style={
-                  {
-                    "--tw-cursor-delay": `${HERO_CURSOR_DELAY}s`,
-                    "--tw-cursor-life": "4.2s",
-                  } as CSSProperties
-                }
-                aria-hidden
-              />
-            ) : null}
-          </span>
+                className="tw-line tw-line--fit inline-block min-w-0"
+                data-hero-bio
+                style={cssVars(
+                  heroT(HERO_BIO_TYPE_OFFSET),
+                  HERO_BIO_TYPE_DURATION,
+                  70,
+                )}
+              >
+                estudante de SI · full-stack developer · segurança ofensiva e
+                defensiva
+              </span>
+              {!skipIntro ? (
+                <span
+                  className="tw-cursor--temp shrink-0"
+                  style={
+                    {
+                      "--tw-cursor-delay": `${HERO_CURSOR_DELAY}s`,
+                      "--tw-cursor-life": "4.2s",
+                    } as CSSProperties
+                  }
+                  aria-hidden
+                />
+              ) : null}
+            </span>
+          </div>
         </div>
 
         <div

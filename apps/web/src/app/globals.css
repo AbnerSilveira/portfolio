@@ -169,6 +169,7 @@
   }
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
     font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
     font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
@@ -209,6 +210,23 @@
     width: 0;
     animation: typewriter-type var(--tw-duration, 1.2s)
       steps(var(--tw-steps, 28), end) var(--tw-delay, 0s) forwards;
+  }
+
+  /*
+   * Texto intrínseco + max-width em steps: a caixa não ocupa 100% da linha, então o
+   * cursor (irmão em inline-flex) fica colado ao fim do texto, não no fim do viewport.
+   */
+  .tw-line.tw-line--fit {
+    width: max-content;
+    max-width: 0;
+    animation: typewriter-fit-max var(--tw-duration, 1.2s)
+      steps(var(--tw-steps, 28), end) var(--tw-delay, 0s) forwards;
+  }
+
+  @keyframes typewriter-fit-max {
+    to {
+      max-width: min(100%, 92ch);
+    }
   }
 
   .tw-cursor--temp {
@@ -331,12 +349,14 @@
   }
 
   /*
-   * Slot baixo + fill-mode both: não empurra “Projetos em destaque”. Só px nos
-   * keyframes (interpola até 0 sem bug). __inner com flex-end = linhas novas no rodapé.
+   * Slot do boot: teto único em px (keyframes). ~320px cobre 13 linhas + gaps + descenders
+   * em text-sm sem cortar a última sequência (clear/whoami).
    */
   .boot-fade {
-    max-height: 304px;
+    --boot-slot-max: 320px;
+    max-height: var(--boot-slot-max);
     overflow: hidden;
+    isolation: isolate;
     animation: boot-fade-out var(--boot-fade-duration, 1s)
       ease-out var(--boot-fade-delay, 4s) both;
   }
@@ -345,7 +365,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    gap: 0.25rem;
+    gap: 0.2rem;
     /* Espaço sob a última linha (line-box / descenders) antes do corte do max-height */
     padding-bottom: 1rem;
   }
@@ -353,15 +373,14 @@
   @keyframes boot-fade-out {
     0% {
       opacity: 1;
-      /* Mesmo teto que .boot-fade em px estável para interpolar até 0 */
-      max-height: 304px;
-      margin-bottom: 2rem;
+      max-height: var(--boot-slot-max, 320px);
+      margin-bottom: 1.25rem;
       filter: blur(0);
     }
     60% {
       opacity: 0;
-      max-height: 304px;
-      margin-bottom: 2rem;
+      max-height: var(--boot-slot-max, 320px);
+      margin-bottom: 1.25rem;
       filter: blur(2px);
     }
     100% {
@@ -445,6 +464,10 @@
     max-width: 100%;
     overflow: visible;
     animation: none;
+  }
+
+  .hero-static .tw-line.tw-line--fit {
+    max-width: none;
   }
 
   .hero-static [data-hero-bio] {
