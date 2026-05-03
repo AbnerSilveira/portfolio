@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@source "../../../../../packages/ui/src/**/*.tsx";
+
+@import "@portfolio/config-tailwind/theme.css";
+@import "tw-animate-css";
