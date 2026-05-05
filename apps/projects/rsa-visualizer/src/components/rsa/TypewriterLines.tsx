@@ -152,7 +152,8 @@ export function TypewriterLines({
     if (elapsedMs >= startMs + durMs) {
       return text.length;
     }
-    const n = Math.floor((elapsedMs - startMs) * rate);
+    // ceil: com ticks discretos, floor(rate·Δt) podia ficar em length−1 até saltar o fim da linha.
+    const n = Math.ceil((elapsedMs - startMs) * rate);
     return Math.min(text.length, Math.max(0, n));
   }
 
@@ -183,13 +184,13 @@ export function TypewriterLines({
             ? "text-muted-foreground"
             : "text-foreground/90";
 
-        const longReveal = breakAll && text.length > 40;
+        const wrapClipReveal = !!breakAll;
         const clipProgress =
           text.length === 0
             ? 1
             : Math.min(1, Math.max(0, n / Math.max(1, text.length)));
 
-        if (longReveal) {
+        if (wrapClipReveal) {
           return (
             <div
               key={`${animKey}-r-${rowIx}`}

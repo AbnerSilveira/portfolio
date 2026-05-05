@@ -32,7 +32,7 @@ export function PrimeSelector({
   return (
     <section
       className={cn(
-        "flex flex-col gap-6 rounded-xl border border-border bg-card p-5 shadow-sm",
+        "flex min-w-0 flex-col gap-6 rounded-xl border border-border bg-card p-5 shadow-sm",
         "lg:min-h-0",
       )}
       aria-labelledby="rsa-primes-heading"

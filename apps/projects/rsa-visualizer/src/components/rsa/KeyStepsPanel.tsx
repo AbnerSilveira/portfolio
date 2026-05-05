@@ -1,7 +1,15 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { cn } from "@portfolio/ui";
 
@@ -22,27 +30,37 @@ export interface KeyStepsPanelProps {
   onDerivationComplete?: () => void;
 }
 
-export function KeyStepsPanel({
-  lastP,
-  lastQ,
-  phi,
-  publicKey,
-  privateKey,
-  onDerivationComplete,
-}: KeyStepsPanelProps) {
+export interface KeyStepsPanelHandle {
+  goPrev: () => void;
+  goNext: () => void;
+  restart: () => void;
+}
+
+export const KeyStepsPanel = forwardRef<
+  KeyStepsPanelHandle,
+  KeyStepsPanelProps
+>(function KeyStepsPanel(
+  { lastP, lastQ, phi, publicKey, privateKey, onDerivationComplete },
+  ref,
+) {
   const hasKeys = publicKey !== null && privateKey !== null && phi !== null;
   const reduceMotion = useReducedMotion();
 
   const [activeStep, setActiveStep] = useState(0);
   const [replayNonce, setReplayNonce] = useState(0);
   const keyVersionRef = useRef("");
+  const activeStepRef = useRef(0);
+  activeStepRef.current = activeStep;
 
   const keyFingerprint = hasKeys
     ? `${publicKey.n.toString()}|${phi.toString()}|${publicKey.e.toString()}|${privateKey.d.toString()}`
     : "";
 
   const derivationEmittedRef = useRef<string | null>(null);
-  /** Após «← Passo»: não avançar sozinho ao fim do typewriter até «Passo →», Reiniciar ou novas chaves. */
+  /**
+   * Se true, ao fim do typewriter não avança sozinho (ex.: após «← Passo»).
+   * «Passo →» só incrementa o passo — não volta a ativar o auto-avanço em cadeia; isso só com Reiniciar ou novas chaves.
+   */
   const blockAutoAdvanceRef = useRef(false);
 
   useEffect(() => {
@@ -57,9 +75,12 @@ export function KeyStepsPanel({
     onDerivationComplete?.();
   }, [keyFingerprint, onDerivationComplete]);
 
-  /** Ao fim do typewriter: avança sozinho, exceto se o utilizador tiver ido para trás com «← Passo». */
+  /** Ao fim do typewriter: avança sozinho só com blockAutoAdvanceRef a false (fluxo inicial ou após Reiniciar / novas chaves). */
   const handleStepTypingEnd = useCallback(
     (stepIndex: number) => {
+      if (activeStepRef.current !== stepIndex) {
+        return;
+      }
       if (stepIndex === STEP_COUNT - 1) {
         handleStep4TypingComplete();
         return;
@@ -130,7 +151,6 @@ export function KeyStepsPanel({
   }, []);
 
   const goNext = useCallback(() => {
-    blockAutoAdvanceRef.current = false;
     setActiveStep((s) => Math.min(STEP_COUNT - 1, s + 1));
   }, []);
 
@@ -140,17 +160,27 @@ export function KeyStepsPanel({
     setReplayNonce((n) => n + 1);
   }, []);
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      goPrev,
+      goNext,
+      restart,
+    }),
+    [goPrev, goNext, restart],
+  );
+
   const btnClass = cn(
     "rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground",
     "transition-colors hover:border-primary/50 hover:bg-muted/50",
     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-    "disabled:pointer-events-none disabled:opacity-40",
+    "disabled:cursor-not-allowed disabled:opacity-40",
   );
 
   return (
     <section
       className={cn(
-        "flex flex-col gap-5 rounded-xl border border-border bg-card p-5 shadow-sm",
+        "flex min-w-0 flex-col gap-5 rounded-xl border border-border bg-card p-5 shadow-sm",
       )}
       aria-labelledby="rsa-steps-heading"
     >
@@ -209,6 +239,7 @@ export function KeyStepsPanel({
               reduceMotion={!!reduceMotion}
               title="gcd(e, φ(n)) = 1"
               lines={stepLines.e}
+              breakAll
               onTypingComplete={() => handleStepTypingEnd(2)}
             />
             <StepRow
@@ -234,6 +265,7 @@ export function KeyStepsPanel({
               onClick={goPrev}
               disabled={activeStep <= 0}
               aria-label="Passo anterior"
+              aria-keyshortcuts="["
             >
               ← Passo
             </button>
@@ -243,10 +275,16 @@ export function KeyStepsPanel({
               onClick={goNext}
               disabled={activeStep >= STEP_COUNT - 1}
               aria-label="Passo seguinte"
+              aria-keyshortcuts="]"
             >
               Passo →
             </button>
-            <button type="button" className={btnClass} onClick={restart}>
+            <button
+              type="button"
+              className={btnClass}
+              onClick={restart}
+              aria-keyshortcuts="Alt+R"
+            >
               Reiniciar
             </button>
             <span className="ml-auto font-mono text-[11px] text-muted-foreground tabular-nums">
@@ -257,7 +295,9 @@ export function KeyStepsPanel({
       )}
     </section>
   );
-}
+});
+
+KeyStepsPanel.displayName = "KeyStepsPanel";
 
 interface StepRowProps {
   index: number;

@@ -4,18 +4,16 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { cn } from "@portfolio/ui";
 
+import { CryptoMessagePanel } from "@/components/rsa/CryptoMessagePanel";
 import { TypewriterLines } from "@/components/rsa/TypewriterLines";
-import { decrypt, encrypt } from "@/lib/rsa";
 import type { RsaPrivateKey, RsaPublicKey } from "@/lib/rsa";
 
 export interface KeyOutputPanelProps {
   publicKey: RsaPublicKey | null;
   privateKey: RsaPrivateKey | null;
-  /** Só mostra chaves / round-trip após o typewriter do passo 4 (coluna central). */
+  /** Só mostra chaves / encriptação interativa após o typewriter do passo 4 (coluna central). */
   outputUnlocked: boolean;
 }
-
-const DEMO_MESSAGE = 42n;
 
 const shellClass = "overflow-hidden rounded-lg border border-border bg-card";
 
@@ -30,32 +28,16 @@ export function KeyOutputPanel({
   const hasKeys = publicKey !== null && privateKey !== null;
 
   const [keysAnimKey, setKeysAnimKey] = useState(0);
-  const [demoReady, setDemoReady] = useState(false);
+  const [keysRevealDone, setKeysRevealDone] = useState(false);
 
   useEffect(() => {
     if (!outputUnlocked) {
-      setDemoReady(false);
+      setKeysRevealDone(false);
       return;
     }
     setKeysAnimKey((k) => k + 1);
-    setDemoReady(false);
+    setKeysRevealDone(false);
   }, [outputUnlocked]);
-
-  const demoBlock = useMemo(() => {
-    if (!hasKeys || !publicKey || !privateKey) {
-      return "";
-    }
-    if (DEMO_MESSAGE < publicKey.n) {
-      const c = encrypt(DEMO_MESSAGE, publicKey);
-      const m2 = decrypt(c, privateKey);
-      return [
-        `m = ${DEMO_MESSAGE.toString()}`,
-        `c = m^e mod n = ${c.toString()}`,
-        `m' = c^d mod n = ${m2.toString()}`,
-      ].join("\n");
-    }
-    return "Mensagem de demonstração fixa (42) é ≥ n — escolhe primos maiores.";
-  }, [hasKeys, publicKey, privateKey]);
 
   const keysLines = useMemo(() => {
     if (!hasKeys || !publicKey || !privateKey) {
@@ -71,25 +53,17 @@ export function KeyOutputPanel({
     ];
   }, [hasKeys, publicKey, privateKey]);
 
-  const demoLines = useMemo(() => {
-    if (!demoBlock) {
-      return [] as string[];
-    }
-    return demoBlock.split("\n");
-  }, [demoBlock]);
-
   const onKeysTyped = useCallback(() => {
-    if (demoLines.length > 0) {
-      setDemoReady(true);
-    }
-  }, [demoLines.length]);
+    setKeysRevealDone(true);
+  }, []);
 
-  const showDemoSection = demoReady && demoLines.length > 0;
+  const showCryptoPanel =
+    keysRevealDone && hasKeys && publicKey !== null && privateKey !== null;
 
   return (
     <section
       className={cn(
-        "flex flex-col gap-5 rounded-xl border border-border bg-card p-5 shadow-sm",
+        "flex min-w-0 flex-col gap-5 rounded-xl border border-border bg-card p-5 shadow-sm",
       )}
       aria-labelledby="rsa-output-heading"
     >
@@ -154,22 +128,8 @@ export function KeyOutputPanel({
             </div>
           </div>
 
-          {showDemoSection ? (
-            <div className={shellClass}>
-              <p className={sectionLabelClass}>Round-trip (m = 42)</p>
-              <div className={cn("min-w-0 px-3 pb-3 pt-1")}>
-                <TypewriterLines
-                  key={`demo-${keysAnimKey}`}
-                  animKey={0}
-                  breakAll
-                  emphasizeLastLine={false}
-                  lines={demoLines}
-                  showPrompt={false}
-                  startDelay={0.04}
-                  className="mt-0 space-y-1"
-                />
-              </div>
-            </div>
+          {showCryptoPanel ? (
+            <CryptoMessagePanel publicKey={publicKey} privateKey={privateKey} />
           ) : null}
         </div>
       ) : null}

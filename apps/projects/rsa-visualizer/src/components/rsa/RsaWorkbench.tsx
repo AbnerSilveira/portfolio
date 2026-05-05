@@ -1,16 +1,40 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { cn } from "@portfolio/ui";
 
 import { KeyOutputPanel } from "@/components/rsa/KeyOutputPanel";
-import { KeyStepsPanel } from "@/components/rsa/KeyStepsPanel";
+import {
+  KeyStepsPanel,
+  type KeyStepsPanelHandle,
+} from "@/components/rsa/KeyStepsPanel";
 import { PrimeSelector } from "@/components/rsa/PrimeSelector";
 import { generateKeyPair, totient } from "@/lib/rsa";
 import type { RsaPrivateKey, RsaPublicKey } from "@/lib/rsa";
 import { parsePositiveBigInt } from "@/lib/parse-bigint";
 import { pickRandomPresetPair } from "@/lib/rsa-presets";
+
+function isBracketHotkeyBlockedTarget(target: EventTarget | null): boolean {
+  const el = target instanceof HTMLElement ? target : null;
+  if (!el) {
+    return false;
+  }
+  const tag = el.tagName;
+  if (tag === "TEXTAREA" || tag === "SELECT") {
+    return true;
+  }
+  if (tag === "INPUT") {
+    return true;
+  }
+  if (el.isContentEditable) {
+    return true;
+  }
+  return false;
+}
+
+const SHORTCUTS_HELP =
+  "Atalhos (fora de campos de texto): [ / ] passo anterior/seguinte · Alt+R reiniciar passos · Ctrl+Enter gerar chaves (não na área de mensagem).";
 
 function errMessage(e: unknown): string {
   if (e instanceof RangeError) {
@@ -38,6 +62,7 @@ export function RsaWorkbench() {
   const [lastP, setLastP] = useState<bigint | null>(null);
   const [lastQ, setLastQ] = useState<bigint | null>(null);
   const [outputUnlocked, setOutputUnlocked] = useState(false);
+  const stepsRef = useRef<KeyStepsPanelHandle>(null);
 
   const keyExportFingerprint = useMemo(() => {
     if (!publicKey || !privateKey) {
@@ -101,11 +126,70 @@ export function RsaWorkbench() {
     setError(null);
   }, []);
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.defaultPrevented) {
+        return;
+      }
+
+      if (e.ctrlKey && e.key === "Enter" && !e.metaKey && !e.altKey) {
+        if (e.target instanceof HTMLTextAreaElement) {
+          return;
+        }
+        e.preventDefault();
+        applyKeys();
+        return;
+      }
+
+      if (
+        e.altKey &&
+        (e.key === "r" || e.key === "R") &&
+        !e.ctrlKey &&
+        !e.metaKey
+      ) {
+        if (isBracketHotkeyBlockedTarget(e.target)) {
+          return;
+        }
+        e.preventDefault();
+        stepsRef.current?.restart();
+        return;
+      }
+
+      if (e.key === "[" || e.key === "]") {
+        if (e.ctrlKey || e.metaKey || e.altKey) {
+          return;
+        }
+        if (isBracketHotkeyBlockedTarget(e.target)) {
+          return;
+        }
+        e.preventDefault();
+        if (e.key === "[") {
+          stepsRef.current?.goPrev();
+        } else {
+          stepsRef.current?.goNext();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [applyKeys]);
+
   return (
     <div className="min-h-dvh">
+      <a
+        href="#rsa-workbench-main"
+        className={cn(
+          "fixed left-3 z-[100] rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground shadow-md",
+          "outline-none ring-2 ring-transparent transition-transform",
+          "-top-16 focus:top-3 focus:ring-ring motion-reduce:transition-none",
+        )}
+      >
+        Saltar para o conteúdo
+      </a>
       <header className="border-b border-border bg-card/60 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-8 sm:flex-row sm:items-end sm:justify-between">
-          <div>
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 sm:px-6 sm:py-8 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0 flex-1">
             <p className="mb-1 font-mono text-xs text-muted-foreground">
               <span className="text-primary">~/</span>
               <span className="text-foreground/80">rsa-visualizer</span>
@@ -113,17 +197,46 @@ export function RsaWorkbench() {
             <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               RSA Visualizer
             </h1>
-            <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-              Matemática Discreta · 2023/1 · chaves a partir de{" "}
-              <span className="font-mono text-foreground/90">p</span>,{" "}
-              <span className="font-mono text-foreground/90">q</span>,{" "}
-              <span className="font-mono text-foreground/90">e</span> (mesmo
-              motor que em{" "}
-              <code className="rounded bg-muted px-1 font-mono text-xs">
-                src/lib
-              </code>
-              ).
-            </p>
+            <div className="mt-2 grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+              <p className="min-w-0 text-sm text-muted-foreground">
+                Matemática Discreta · 2023/1 · chaves a partir de{" "}
+                <span className="font-mono text-foreground/90">p</span>,{" "}
+                <span className="font-mono text-foreground/90">q</span>,{" "}
+                <span className="font-mono text-foreground/90">e</span> (mesmo
+                motor que em{" "}
+                <code className="rounded bg-muted px-1 font-mono text-xs">
+                  src/lib
+                </code>
+                ).
+              </p>
+              <span className="group relative shrink-0 pt-0.5">
+                <button
+                  type="button"
+                  className={cn(
+                    "inline-flex h-4 w-4 items-center justify-center rounded-sm border border-border/60 bg-muted/40",
+                    "text-[9px] font-bold leading-none text-muted-foreground/80 transition-colors",
+                    "hover:border-border hover:bg-muted/70 hover:text-muted-foreground",
+                    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring",
+                  )}
+                  aria-label="Atalhos de teclado"
+                  aria-describedby="rsa-shortcuts-tooltip"
+                >
+                  !
+                </button>
+                <span
+                  id="rsa-shortcuts-tooltip"
+                  role="tooltip"
+                  className={cn(
+                    "pointer-events-none absolute right-0 top-full z-50 mt-1.5 w-max max-w-[min(18rem,calc(100vw-2rem))]",
+                    "rounded border border-border bg-card px-2 py-1.5 text-left text-[10px] leading-snug text-foreground shadow-sm",
+                    "opacity-0 transition-opacity duration-150",
+                    "group-hover:opacity-100 group-focus-within:opacity-100",
+                  )}
+                >
+                  {SHORTCUTS_HELP}
+                </span>
+              </span>
+            </div>
           </div>
           {portfolioBase ? (
             <a
@@ -139,8 +252,12 @@ export function RsaWorkbench() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-10 sm:py-14">
-        <div className="grid gap-8 lg:grid-cols-3 lg:items-start">
+      <main
+        id="rsa-workbench-main"
+        tabIndex={-1}
+        className="mx-auto max-w-6xl scroll-mt-4 px-4 py-8 outline-none sm:px-6 sm:py-14"
+      >
+        <div className="grid min-w-0 gap-6 sm:gap-8 lg:grid-cols-3 lg:items-start">
           <PrimeSelector
             p={pStr}
             q={qStr}
@@ -154,6 +271,7 @@ export function RsaWorkbench() {
             error={error}
           />
           <KeyStepsPanel
+            ref={stepsRef}
             lastP={lastP}
             lastQ={lastQ}
             phi={phi}
