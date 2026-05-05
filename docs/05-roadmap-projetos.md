@@ -37,7 +37,7 @@ Plano completo dos 15 projetos + TCC. A ordem segue o calendário acadêmico. Ca
 
 **Por que é um bom primeiro projeto:** escopo pequeno, roda 100% no browser, é um ótimo template para os próximos projetos. Você estabelece o padrão de como documentar, testar e integrar ao portfólio.
 
-**Demo:** `<DemoFrame />` no portfólio.
+**Demo:** componente React renderizado em rota dedicada do `apps/web` (`/projetos/<slug>/demo`). Sem iframe, sem deploy adicional. Padrão em `docs/workflow/new-project.md`.
 
 **Esforço estimado:** 1 semana.
 
@@ -61,7 +61,7 @@ Plano completo dos 15 projetos + TCC. A ordem segue o calendário acadêmico. Ca
 
 **Zero-knowledge:** servidor nunca vê senhas. Tudo client-side.
 
-**Demo:** interativa — usuário pode criar vault demo temporário.
+**Demo:** componente React renderizado em rota dedicada do `apps/web` (`/projetos/<slug>/demo`). Sem iframe, sem deploy adicional. Padrão em `docs/workflow/new-project.md`.
 
 **Esforço estimado:** 2 semanas.
 
@@ -83,7 +83,7 @@ Plano completo dos 15 projetos + TCC. A ordem segue o calendário acadêmico. Ca
 
 **Stack:** Next.js + WebAssembly (compilar detector em Rust/C para rodar no browser).
 
-**Demo:** interativa — upload de imagem, análise em tempo real.
+**Demo:** componente React renderizado em rota dedicada do `apps/web` (`/projetos/<slug>/demo`). Sem iframe, sem deploy adicional. Padrão em `docs/workflow/new-project.md`.
 
 **Esforço estimado:** 2 semanas.
 
@@ -117,7 +117,7 @@ Plano completo dos 15 projetos + TCC. A ordem segue o calendário acadêmico. Ca
 
 **Stack:** NestJS + PostgreSQL + `pgcrypto` + `@portfolio/crypto-utils`.
 
-**Demo:** interativa — usuário cola texto, sistema destaca PII encontrado.
+**Demo:** componente React renderizado em rota dedicada do `apps/web` (`/projetos/<slug>/demo`). Sem iframe, sem deploy adicional. Padrão em `docs/workflow/new-project.md`.
 
 **Esforço estimado:** 2 semanas.
 
@@ -149,7 +149,7 @@ Plano completo dos 15 projetos + TCC. A ordem segue o calendário acadêmico. Ca
 
 **Stack:** React Native ou Flutter + `@portfolio/crypto-utils`.
 
-**Demo:** APK assinado disponível para download + versão web da UI no portfólio.
+**Demo:** APK assinado disponível para download + versão web da UI como componente React em rota dedicada do `apps/web` (`/projetos/<slug>/demo`). Sem iframe, sem deploy adicional. Padrão em `docs/workflow/new-project.md`.
 
 **Esforço estimado:** 3 semanas.
 

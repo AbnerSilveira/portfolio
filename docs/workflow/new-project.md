@@ -328,7 +328,16 @@ pnpm dev --filter=web
 
 ### Se for `interactive`
 
-O projeto expõe um componente React embedado via `<DemoFrame />`. Garantir que ele roda isolado sem dependências do `apps/web`.
+O projeto vive em `apps/projects/<slug>/` como **package de componentes React** (não como Next.js app). Estrutura:
+
+- `package.json` com `"main": "./src/index.ts"`, `react` e `react-dom` em `peerDependencies`, sem `next` nas deps.
+- `src/index.ts` exporta o componente raiz da demo (ex.: `<NomeDoProjeto />`) e APIs públicas reutilizáveis.
+- Sem `app/`, `next.config.ts`, ou `globals.css` próprios — o consumidor (`apps/web`) cuida disso.
+- Imports internos do package são **relativos** (`./Foo`, `../../lib/Bar`). Aliases `@/*` rebentam em runtime no `transpilePackages` do Next.
+
+Adicionar o package em `transpilePackages` no `apps/web/next.config.ts` e em `@source` no `apps/web/src/app/globals.css` (Tailwind v4 não rastreia automaticamente classes de packages workspace). Criar a rota dedicada em `apps/web/src/app/projetos/<slug>/demo/page.tsx` que renderiza o componente raiz. O MDX do projeto linka para essa rota (preferido) ou embeda o componente via Mdx provider.
+
+**Não usar `<DemoFrame />`** — esse componente é exclusivo de projetos `sandbox` (que rodam código não-confiável e exigem iframe cross-origin para isolamento real).
 
 ### Se for `sandbox`
 

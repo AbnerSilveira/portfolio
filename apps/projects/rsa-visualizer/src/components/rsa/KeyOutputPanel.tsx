@@ -4,9 +4,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { cn } from "@portfolio/ui";
 
-import { CryptoMessagePanel } from "@/components/rsa/CryptoMessagePanel";
-import { TypewriterLines } from "@/components/rsa/TypewriterLines";
-import type { RsaPrivateKey, RsaPublicKey } from "@/lib/rsa";
+import { CryptoMessagePanel } from "./CryptoMessagePanel";
+import { TypewriterLines } from "./TypewriterLines";
+import type { RsaPrivateKey, RsaPublicKey } from "../../lib/rsa";
 
 export interface KeyOutputPanelProps {
   publicKey: RsaPublicKey | null;

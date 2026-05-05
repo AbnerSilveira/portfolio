@@ -22,9 +22,9 @@ Esta demo implementa o núcleo **no browser**, com `BigInt` nativo (sem `node:cr
 
 ## Demo
 
-<RsaDemoFrame />
+[Abrir a demo interativa](/projetos/rsa-visualizer/demo)
 
-Em desenvolvimento local, sobe o visualizador com `pnpm dev --filter=@projects/rsa-visualizer` (porta **3001** por omissão). O portfólio (`apps/web`) usa `NEXT_PUBLIC_RSA_VISUALIZER_URL` para apontar o iframe; sem variável, assume `http://localhost:3001`.
+A demo é servida no mesmo deploy do portfólio: `apps/projects/rsa-visualizer` é um package de componentes consumido pela rota `/projetos/rsa-visualizer/demo` em `apps/web`. Sem iframe, sem subdomínio, sem variável de URL externa.
 
 ## Conceitos cobertos
 
@@ -45,4 +45,4 @@ Chaves com primos **pequenos** (32 bits no máximo didático): rápidas de anima
 
 ## Código
 
-Código-fonte no monorepo, em `apps/projects/rsa-visualizer`.
+Código-fonte no monorepo, em `apps/projects/rsa-visualizer` (package de componentes `@projects/rsa-visualizer`).

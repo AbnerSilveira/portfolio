@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import { TypewriterLines } from "@/components/rsa/TypewriterLines";
+import { TypewriterLines } from "./TypewriterLines";
 
 export interface StepCalcRevealProps {
   /** Título do passo (ex. «n = p · q») — entra na animação como primeira linha. */

@@ -208,8 +208,7 @@ export function Hero() {
             width={768}
             height={768}
             loading="lazy"
-            className="h-auto w-full select-none opacity-70 brightness-0 dark:opacity-30 dark:brightness-100"
-            style={{ filter: "blur(0.3px)" }}
+            className="h-auto w-full select-none blur-[0.3px] brightness-0 opacity-25 dark:opacity-30 dark:brightness-100"
           />
         </div>
 

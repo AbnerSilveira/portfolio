@@ -4,11 +4,11 @@ import { useCallback, useState } from "react";
 
 import { cn } from "@portfolio/ui";
 
-import { TypewriterLines } from "@/components/rsa/TypewriterLines";
-import { decrypt, encrypt } from "@/lib/rsa";
-import type { RsaPrivateKey, RsaPublicKey } from "@/lib/rsa";
-import { parsePositiveBigInt } from "@/lib/parse-bigint";
-import { bigIntToUtf8, utf8ToMessageBigInt } from "@/lib/utf8-message";
+import { TypewriterLines } from "./TypewriterLines";
+import { decrypt, encrypt } from "../../lib/rsa";
+import type { RsaPrivateKey, RsaPublicKey } from "../../lib/rsa";
+import { parsePositiveBigInt } from "../../lib/parse-bigint";
+import { bigIntToUtf8, utf8ToMessageBigInt } from "../../lib/utf8-message";
 
 export interface CryptoMessagePanelProps {
   publicKey: RsaPublicKey;

@@ -26,8 +26,8 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 border-b border-transparent transition-colors",
-        scrolled && "navbar-scrolled border-border",
+        "sticky top-0 z-50 border-b border-border/30 bg-card transition-colors",
+        scrolled && "border-border",
       )}
     >
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-6">

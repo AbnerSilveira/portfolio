@@ -181,22 +181,27 @@ Ver `.github/workflows/threat-intel-cron.yml`.
 
 ### Subdomínios
 
-| Subdomínio      | Aponta para               | Função                           |
-| --------------- | ------------------------- | -------------------------------- |
-| `portfolio.<d>` | Vercel                    | Site principal                   |
-| `www.<d>`       | Vercel (redirect)         | Alias para portfolio             |
-| `<d>` (apex)    | Vercel (redirect)         | Alias para portfolio             |
-| `tcc.<d>`       | Vercel                    | TCC frontend                     |
-| `demo.<d>`      | Fly.io                    | Demos interativas embedadas      |
-| `api.<d>`       | Fly.io                    | Sandbox runner + TCC backend API |
-| `assets.<d>`    | Cloudflare R2             | Videos e assets grandes          |
-| `honeypot.<d>`  | Hetzner (só na temporada) | Entradas fake para captura       |
+| Subdomínio      | Aponta para               | Função                                                                                          |
+| --------------- | ------------------------- | ----------------------------------------------------------------------------------------------- |
+| `portfolio.<d>` | Vercel                    | Site principal — inclui demos `interactive` em rotas internas (`/projetos/<slug>/demo`)         |
+| `www.<d>`       | Vercel (redirect)         | Alias para portfolio                                                                            |
+| `<d>` (apex)    | Vercel (redirect)         | Alias para portfolio                                                                            |
+| `tcc.<d>`       | Vercel                    | TCC frontend                                                                                    |
+| `demo.<d>`      | Fly.io (só se necessário) | Backends de projetos `sandbox` que precisam de URL pública (alvo de iframe via `<DemoFrame />`) |
+| `api.<d>`       | Fly.io                    | Sandbox runner + TCC backend API                                                                |
+| `assets.<d>`    | Cloudflare R2             | Videos e assets grandes                                                                         |
+| `honeypot.<d>`  | Hetzner (só na temporada) | Entradas fake para captura                                                                      |
+
+> **Comportamento por categoria:**
+>
+> - **Projetos `interactive`** (RSA Visualizer #1, Password Manager #3, Esteganálise #5, Encrypted Storage #8, Mobile 2FA #11): servidos como rotas internas do `apps/web` (mesmo deploy Vercel, mesmo subdomínio `portfolio.<d>`). Sem iframe, sem deploy adicional.
+> - **Projetos `sandbox`** (#4, #6, #9, #10, #13): continuam usando `api.<d>` (Fly.io) como antes. O `<DemoFrame />` aponta para o app Fly.io, que retorna a UI específica do alvo. `demo.<d>` só faz sentido se algum sandbox precisar de URL pública dedicada.
 
 ### Isolamento por subdomínio
 
-- `portfolio.<d>` e `demo.<d>` estão em subdomínios diferentes **de propósito**. CSP restritiva no principal; demos mais permissivas no demo — sem risco de escape.
-- Cookies de um subdomínio não vazam para outro (CSP path scoped)
-- iframes do portfólio para demo.<d> usam `sandbox="allow-scripts allow-same-origin"` — permissões mínimas
+- O isolamento via subdomínio (`demo.<d>` separado do `portfolio.<d>` com CSP mais permissiva) vale **apenas para projetos `sandbox` em URL externa** (Fly.io). Aí o iframe cross-origin com `sandbox="allow-scripts allow-same-origin"` é o mecanismo de defesa contra payloads não-confiáveis executados pela demo.
+- Para projetos `interactive` (servidos como rotas internas do `apps/web`), o isolamento por subdomínio **não é necessário**: o código é próprio e auditado, e o ganho de unificação de deploy (zero CORS, SEO unificado, tema/fontes/Tailwind compartilhados, sem duplicar overhead React) supera o teórico de CSP segregada.
+- Cookies de um subdomínio continuam não vazando para outro (CSP path scoped) — relevante quando há `demo.<d>` ativo para sandbox.
 
 ### DNS durante temporadas do honeypot
 

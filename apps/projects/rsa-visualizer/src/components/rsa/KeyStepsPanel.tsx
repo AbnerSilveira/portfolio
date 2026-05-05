@@ -13,10 +13,10 @@ import {
 
 import { cn } from "@portfolio/ui";
 
-import { StepCalcReveal } from "@/components/rsa/StepCalcReveal";
-import { extendedEuclid } from "@/lib/euclidean";
-import { chunkBigIntLine } from "@/lib/chunk-bigint-display";
-import type { RsaPrivateKey, RsaPublicKey } from "@/lib/rsa";
+import { StepCalcReveal } from "./StepCalcReveal";
+import { extendedEuclid } from "../../lib/euclidean";
+import { chunkBigIntLine } from "../../lib/chunk-bigint-display";
+import type { RsaPrivateKey, RsaPublicKey } from "../../lib/rsa";
 
 const STEP_COUNT = 4;
 

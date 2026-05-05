@@ -2,7 +2,7 @@
 
 import { cn } from "@portfolio/ui";
 
-import { RSA_PRESET_PAIRS } from "@/lib/rsa-presets";
+import { RSA_PRESET_PAIRS } from "../../lib/rsa-presets";
 
 export interface PrimeSelectorProps {
   p: string;

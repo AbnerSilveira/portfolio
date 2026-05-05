@@ -4,16 +4,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { cn } from "@portfolio/ui";
 
-import { KeyOutputPanel } from "@/components/rsa/KeyOutputPanel";
-import {
-  KeyStepsPanel,
-  type KeyStepsPanelHandle,
-} from "@/components/rsa/KeyStepsPanel";
-import { PrimeSelector } from "@/components/rsa/PrimeSelector";
-import { generateKeyPair, totient } from "@/lib/rsa";
-import type { RsaPrivateKey, RsaPublicKey } from "@/lib/rsa";
-import { parsePositiveBigInt } from "@/lib/parse-bigint";
-import { pickRandomPresetPair } from "@/lib/rsa-presets";
+import { KeyOutputPanel } from "./KeyOutputPanel";
+import { KeyStepsPanel, type KeyStepsPanelHandle } from "./KeyStepsPanel";
+import { PrimeSelector } from "./PrimeSelector";
+import { generateKeyPair, totient } from "../../lib/rsa";
+import type { RsaPrivateKey, RsaPublicKey } from "../../lib/rsa";
+import { parsePositiveBigInt } from "../../lib/parse-bigint";
+import { pickRandomPresetPair } from "../../lib/rsa-presets";
 
 function isBracketHotkeyBlockedTarget(target: EventTarget | null): boolean {
   const el = target instanceof HTMLElement ? target : null;
@@ -46,12 +43,20 @@ function errMessage(e: unknown): string {
   return "Erro ao gerar chaves.";
 }
 
-export function RsaWorkbench() {
-  const portfolioBase = useMemo(
-    () => process.env.NEXT_PUBLIC_PORTFOLIO_URL?.replace(/\/$/, "") ?? "",
-    [],
-  );
+export interface RsaWorkbenchProps {
+  /** Ajusta o chrome/layout quando embebido num site host (ex.: apps/web). */
+  variant?: "standalone" | "embedded";
+  /**
+   * Quando definido, renderiza um link "← Portfólio" no topo do header com este href.
+   * Útil quando a demo é servida fora do contexto do `apps/web` (que já tem Navbar própria).
+   */
+  backHref?: string;
+}
 
+export function RsaWorkbench({
+  variant = "standalone",
+  backHref,
+}: RsaWorkbenchProps = {}) {
   const [pStr, setPStr] = useState("61");
   const [qStr, setQStr] = useState("53");
   const [eStr, setEStr] = useState("17");
@@ -176,7 +181,7 @@ export function RsaWorkbench() {
   }, [applyKeys]);
 
   return (
-    <div className="min-h-dvh">
+    <div className={cn(variant === "standalone" && "min-h-dvh")}>
       <a
         href="#rsa-workbench-main"
         className={cn(
@@ -187,75 +192,81 @@ export function RsaWorkbench() {
       >
         Saltar para o conteúdo
       </a>
-      <header className="border-b border-border bg-card/60 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 sm:px-6 sm:py-8 sm:flex-row sm:items-end sm:justify-between">
-          <div className="min-w-0 flex-1">
-            <p className="mb-1 font-mono text-xs text-muted-foreground">
-              <span className="text-primary">~/</span>
-              <span className="text-foreground/80">rsa-visualizer</span>
-            </p>
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              RSA Visualizer
-            </h1>
-            <div className="mt-2 grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
-              <p className="min-w-0 text-sm text-muted-foreground">
-                Matemática Discreta · 2023/1 · chaves a partir de{" "}
-                <span className="font-mono text-foreground/90">p</span>,{" "}
-                <span className="font-mono text-foreground/90">q</span>,{" "}
-                <span className="font-mono text-foreground/90">e</span> (mesmo
-                motor que em{" "}
-                <code className="rounded bg-muted px-1 font-mono text-xs">
-                  src/lib
-                </code>
-                ).
+      {variant === "standalone" ? (
+        <header className="border-b border-border bg-card/60 backdrop-blur-sm">
+          <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 sm:px-6 sm:py-8 sm:flex-row sm:items-end sm:justify-between">
+            <div className="min-w-0 flex-1">
+              <p className="mb-1 font-mono text-xs text-muted-foreground">
+                <span className="text-primary">~/</span>
+                <span className="text-foreground/80">rsa-visualizer</span>
               </p>
-              <span className="group relative shrink-0 pt-0.5">
-                <button
-                  type="button"
-                  className={cn(
-                    "inline-flex h-4 w-4 items-center justify-center rounded-sm border border-border/60 bg-muted/40",
-                    "text-[9px] font-bold leading-none text-muted-foreground/80 transition-colors",
-                    "hover:border-border hover:bg-muted/70 hover:text-muted-foreground",
-                    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring",
-                  )}
-                  aria-label="Atalhos de teclado"
-                  aria-describedby="rsa-shortcuts-tooltip"
-                >
-                  !
-                </button>
-                <span
-                  id="rsa-shortcuts-tooltip"
-                  role="tooltip"
-                  className={cn(
-                    "pointer-events-none absolute right-0 top-full z-50 mt-1.5 w-max max-w-[min(18rem,calc(100vw-2rem))]",
-                    "rounded border border-border bg-card px-2 py-1.5 text-left text-[10px] leading-snug text-foreground shadow-sm",
-                    "opacity-0 transition-opacity duration-150",
-                    "group-hover:opacity-100 group-focus-within:opacity-100",
-                  )}
-                >
-                  {SHORTCUTS_HELP}
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                RSA Visualizer
+              </h1>
+              <div className="mt-2 grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+                <p className="min-w-0 text-sm text-muted-foreground">
+                  Matemática Discreta · 2023/1 · chaves a partir de{" "}
+                  <span className="font-mono text-foreground/90">p</span>,{" "}
+                  <span className="font-mono text-foreground/90">q</span>,{" "}
+                  <span className="font-mono text-foreground/90">e</span> (mesmo
+                  motor que em{" "}
+                  <code className="rounded bg-muted px-1 font-mono text-xs">
+                    src/lib
+                  </code>
+                  ).
+                </p>
+                <span className="group relative shrink-0 pt-0.5">
+                  <button
+                    type="button"
+                    className={cn(
+                      "inline-flex h-4 w-4 items-center justify-center rounded-sm border border-border/60 bg-muted/40",
+                      "text-[9px] font-bold leading-none text-muted-foreground/80 transition-colors",
+                      "hover:border-border hover:bg-muted/70 hover:text-muted-foreground",
+                      "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring",
+                    )}
+                    aria-label="Atalhos de teclado"
+                    aria-describedby="rsa-shortcuts-tooltip"
+                  >
+                    !
+                  </button>
+                  <span
+                    id="rsa-shortcuts-tooltip"
+                    role="tooltip"
+                    className={cn(
+                      "pointer-events-none absolute right-0 top-full z-50 mt-1.5 w-max max-w-[min(18rem,calc(100vw-2rem))]",
+                      "rounded border border-border bg-card px-2 py-1.5 text-left text-[10px] leading-snug text-foreground shadow-sm",
+                      "opacity-0 transition-opacity duration-150",
+                      "group-hover:opacity-100 group-focus-within:opacity-100",
+                    )}
+                  >
+                    {SHORTCUTS_HELP}
+                  </span>
                 </span>
-              </span>
+              </div>
             </div>
+            {backHref ? (
+              <a
+                href={backHref}
+                className={cn(
+                  "shrink-0 font-mono text-sm text-primary/90 underline-offset-4 transition-colors",
+                  "hover:text-primary hover:underline",
+                )}
+              >
+                ← Portfólio
+              </a>
+            ) : null}
           </div>
-          {portfolioBase ? (
-            <a
-              href={portfolioBase}
-              className={cn(
-                "shrink-0 font-mono text-sm text-primary/90 underline-offset-4 transition-colors",
-                "hover:text-primary hover:underline",
-              )}
-            >
-              ← Portfólio
-            </a>
-          ) : null}
-        </div>
-      </header>
+        </header>
+      ) : null}
 
       <main
         id="rsa-workbench-main"
         tabIndex={-1}
-        className="mx-auto max-w-6xl scroll-mt-4 px-4 py-8 outline-none sm:px-6 sm:py-14"
+        className={cn(
+          "scroll-mt-4 outline-none",
+          variant === "standalone" &&
+            "mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-14",
+        )}
       >
         <div className="grid min-w-0 gap-6 sm:gap-8 lg:grid-cols-3 lg:items-start">
           <PrimeSelector

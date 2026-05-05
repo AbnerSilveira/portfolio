@@ -614,6 +614,22 @@ export default async function ProjectPage({
 }
 ```
 
+### Rotas de demo de projetos `interactive`
+
+Cada projeto `interactive` tem sua rota dedicada em `apps/web/src/app/projetos/<slug>/demo/page.tsx`, que importa e renderiza o componente raiz exportado pelo respectivo `@projects/<slug>` (que é um package, não um app). Isso unifica o deploy e elimina a necessidade de subdomínio/iframe para esses projetos. Ver `docs/workflow/new-project.md` para o padrão completo.
+
+### Tipografia do conteúdo MDX (prose)
+
+A renderização de MDX depende do plugin `@tailwindcss/typography`, declarado via `@plugin "@tailwindcss/typography";` em `apps/web/src/app/globals.css` (Tailwind v4). Sem isto, classes `prose-*` no wrapper do `MDXContent` ficam inertes e o conteúdo aparece sem hierarquia visual.
+
+Wrapper padrão:
+
+```tsx
+<article className="prose prose-neutral dark:prose-invert max-w-none">
+  <MDXContent />
+</article>
+```
+
 ---
 
 ## Passo 6 — API routes

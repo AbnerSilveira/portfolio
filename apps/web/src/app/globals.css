@@ -1,7 +1,10 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Garante utilities usadas em @portfolio/ui (ex.: ProjectCard) no bundle do web */
 @source "../../../../packages/ui/src/**/*.tsx";
+/* Demos `interactive` servidas dentro do apps/web (ex.: rsa-visualizer) */
+@source "../../../../apps/projects/rsa-visualizer/src/**/*.tsx";
 
 @import "@portfolio/config-tailwind/theme.css";
 @import "tw-animate-css";
@@ -12,43 +15,45 @@
 /* Design system — ver docs/04-portfolio-publico.md (identidade visual e design polish) */
 
 :root {
-  --background: oklch(0.93 0.04 95);
+  /* Light mode: bg quase branco; creme vira superfície elevada (cards/nav/secondary). */
+  --background: oklch(0.985 0.008 95);
   --foreground: oklch(0.28 0.02 50);
-  --card: oklch(0.97 0.02 95);
+  --card: oklch(0.93 0.04 95);
   --card-foreground: oklch(0.28 0.02 50);
-  --popover: oklch(0.97 0.02 95);
+  --popover: oklch(0.93 0.04 95);
   --popover-foreground: oklch(0.28 0.02 50);
-  --primary: oklch(0.42 0.15 275);
+  /* Primário / acentos: verde floresta (~#1B4D2E), alinhado ao light mode. */
+  --primary: oklch(0.33 0.09 152);
   --primary-foreground: oklch(0.97 0.02 95);
-  --secondary: oklch(0.89 0.03 90);
+  --secondary: oklch(0.93 0.03 95);
   --secondary-foreground: oklch(0.28 0.02 50);
-  --muted: oklch(0.91 0.03 90);
+  --muted: oklch(0.95 0.015 95);
   --muted-foreground: oklch(0.35 0.03 70);
-  --accent: oklch(0.91 0.04 275);
-  --accent-foreground: oklch(0.42 0.15 275);
+  --accent: oklch(0.91 0.035 152);
+  --accent-foreground: oklch(0.33 0.09 152);
   --destructive: oklch(0.48 0.15 25);
   --warning: oklch(0.55 0.12 75);
-  --border: oklch(0.35 0.02 50 / 0.15);
-  --input: oklch(0.35 0.02 50 / 0.2);
-  --ring: oklch(0.42 0.15 275);
+  --border: oklch(0.35 0.02 50 / 0.22);
+  --input: oklch(0.35 0.02 50 / 0.26);
+  --ring: oklch(0.33 0.09 152);
   --radius: 0.5rem;
-  --chart-1: oklch(0.42 0.15 275);
+  --chart-1: oklch(0.33 0.09 152);
   --chart-2: oklch(0.55 0.12 75);
   --chart-3: oklch(0.48 0.15 25);
   --chart-4: oklch(0.35 0.03 70);
   --chart-5: oklch(0.89 0.03 90);
   --sidebar: oklch(0.97 0.02 95);
   --sidebar-foreground: oklch(0.28 0.02 50);
-  --sidebar-primary: oklch(0.42 0.15 275);
+  --sidebar-primary: oklch(0.33 0.09 152);
   --sidebar-primary-foreground: oklch(0.97 0.02 95);
-  --sidebar-accent: oklch(0.91 0.04 275);
-  --sidebar-accent-foreground: oklch(0.42 0.15 275);
+  --sidebar-accent: oklch(0.91 0.035 152);
+  --sidebar-accent-foreground: oklch(0.33 0.09 152);
   --sidebar-border: oklch(0.35 0.02 50 / 0.15);
-  --sidebar-ring: oklch(0.42 0.15 275);
+  --sidebar-ring: oklch(0.33 0.09 152);
   /* Pontos de impacto nos cards (listing) — leitura clara sobre fundo claro */
   --project-impact-high: oklch(0.48 0.12 27);
   --project-impact-medium: oklch(0.52 0.1 65);
-  --project-impact-low: oklch(0.44 0.11 275);
+  --project-impact-low: oklch(0.4 0.1 152);
 }
 
 .dark {
@@ -491,9 +496,4 @@
     animation: none;
   }
 
-  .navbar-scrolled {
-    background-color: color-mix(in oklch, var(--background) 70%, transparent);
-    backdrop-filter: saturate(180%) blur(12px);
-    -webkit-backdrop-filter: saturate(180%) blur(12px);
-  }
 }
