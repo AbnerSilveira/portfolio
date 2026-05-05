@@ -1,0 +1,48 @@
+---
+title: "RSA Visualizer"
+description: "RSA didático no browser: primos, φ(n), Euclides estendido, chaves e encriptação com animações."
+subject: "Matemática Discreta"
+semester: "2023/1"
+impact: "medium"
+category: "interactive"
+tags:
+  - rsa
+  - criptografia
+  - matemática-discreta
+  - miller-rabin
+  - bigint
+date: 2023-05-15
+---
+
+## Sobre o projeto
+
+RSA é a base da criptografia assimétrica moderna. Entender como funciona — não só como chamar uma biblioteca — ajuda a arquitetar sistemas com mais confiança.
+
+Esta demo implementa o núcleo **no browser**, com `BigInt` nativo (sem `node:crypto` no motor), e mostra **passo a passo** a derivação de chaves e um exemplo de encriptação/decriptação.
+
+## Demo
+
+<RsaDemoFrame />
+
+Em desenvolvimento local, sobe o visualizador com `pnpm dev --filter=@projects/rsa-visualizer` (porta **3001** por omissão). O portfólio (`apps/web`) usa `NEXT_PUBLIC_RSA_VISUALIZER_URL` para apontar o iframe; sem variável, assume `http://localhost:3001`.
+
+## Conceitos cobertos
+
+- Aritmética modular e exponenciação modular (`modPow`)
+- Algoritmo de Euclides estendido (inverso modular de `e` modulo `φ(n)`)
+- Miller–Rabin para primalidade (incluindo números de Carmichael onde o teste de Fermat falha)
+- Geração de chaves e round-trip \(m \to c \to m'\) com mensagem curta em UTF-8 (inteiro por bloco)
+
+## Destaques técnicos
+
+- Testes em Vitest sobre `src/lib` (modular, Euclides, primalidade, RSA, mensagem UTF-8)
+- UI com Framer Motion nos passos e typewriter nas linhas de cálculo
+- Atalhos de teclado na página da demo (ver ajuda no canto do subtítulo)
+
+## Limitações didáticas
+
+Chaves com primos **pequenos** (32 bits no máximo didático): rápidas de animar, mas **não** representam parâmetros de produção (2048+ bits, OAEP, híbridos com AES, etc.).
+
+## Código
+
+Código-fonte no monorepo, em `apps/projects/rsa-visualizer`.

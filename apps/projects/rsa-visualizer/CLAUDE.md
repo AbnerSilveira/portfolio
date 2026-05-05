@@ -89,7 +89,13 @@ App estático; sem URLs de utilizador para serviços externos no núcleo. Qualqu
 
 ## 10. Próximos passos
 
-- [ ] Implementar `modular.ts`, `euclidean.ts`, `prime.ts`, `rsa.ts` com TDD (`docs/roadmap/2023-1.md` — Dia 2)
-- [ ] UI em colunas + `PrimeSelector` (Dia 3)
-- [ ] Framer Motion nos passos (Dia 4–5)
-- [ ] MDX em `apps/web/content/projects/rsa-visualizer.mdx` + `DemoFrame` (Dia 7 / `new-project.md` §9)
+- [x] Implementar `modular.ts`, `euclidean.ts`, `prime.ts`, `rsa.ts` com TDD (`docs/roadmap/2023-1.md` — Dia 2)
+- [x] UI em colunas + `PrimeSelector` (Dia 3)
+- [x] Framer Motion nos passos (Dia 4–5)
+- [x] MDX em `apps/web/content/projects/rsa-visualizer.mdx` + `RsaDemoFrame` / `DemoFrame` (Dia 7 / `new-project.md` §9)
+
+### Integração portfólio (`apps/web`)
+
+- Página: `/projetos/rsa-visualizer` (Contentlayer).
+- Iframe: `RsaDemoFrame` → `NEXT_PUBLIC_RSA_VISUALIZER_URL` (ver `apps/web/.env.example`); omissão = `http://localhost:3001`.
+- Deploy: publicar `apps/projects/rsa-visualizer` noutro domínio ou projeto Vercel e definir a variável no build do `web`.

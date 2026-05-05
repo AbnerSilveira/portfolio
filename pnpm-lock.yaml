@@ -95,6 +95,9 @@ importers:
       "@base-ui/react":
         specifier: ^1.4.1
         version: 1.4.1(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      "@portfolio/ui":
+        specifier: workspace:*
+        version: link:../../packages/ui
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -144,9 +147,6 @@ importers:
       "@portfolio/types":
         specifier: workspace:*
         version: link:../../packages/types
-      "@portfolio/ui":
-        specifier: workspace:*
-        version: link:../../packages/ui
       "@tailwindcss/postcss":
         specifier: ^4.1.0
         version: 4.2.4
