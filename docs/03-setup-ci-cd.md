@@ -542,26 +542,26 @@ Só criar quando o projeto Threat Intel Dashboard chegar no roadmap (2025/2).
 
 Marque no GitHub / consoles o que não dá para inferir só pelo repositório.
 
-### Auditoria (repo `portfolio/` — 2026-04-24)
+### Auditoria (repo `portfolio/` — 2026-04-24; Neon/secrets confirmados 2026-05-03)
 
-| Critério                                   | Evidência no repo                                                             | Verificação externa                                                     |
-| ------------------------------------------ | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| CI (lint, typecheck, test, build)          | `.github/workflows/ci.yml` com quatro jobs                                    | Último run verde em **Actions**                                         |
-| Security (Gitleaks, Semgrep, Snyk, CodeQL) | `.github/workflows/security.yml`                                              | Secrets `SEMGREP_APP_TOKEN`, `SNYK_TOKEN`; aba **Security** para CodeQL |
-| Deploy Vercel                              | Integração nativa Vercel ↔ GitHub (Settings → Git; Root Directory `apps/web`) | Dashboard Vercel                                                        |
-| Fly sandbox-runner                         | `services/sandbox-runner/`, `deploy-services.yml`, `fly.toml` (scale-to-zero) | `GET /health` → **200** com `{"status":"ok",...}` (testado 2026-04-24)  |
-| Neon + branches + secrets                  | —                                                                             | Console Neon + GitHub Secrets + Fly secrets                             |
-| Domínio `api.*` → Fly                      | —                                                                             | DNS no provedor                                                         |
-| R2                                         | —                                                                             | Opcional até assets grandes (Passo 8); não bloqueia Fase 0              |
-| Branch protection                          | —                                                                             | **Settings → Branches** em `main`                                       |
+| Critério                                   | Evidência no repo                                                             | Verificação externa                                                                                                                                               |
+| ------------------------------------------ | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CI (lint, typecheck, test, build)          | `.github/workflows/ci.yml` com quatro jobs                                    | Último run verde em **Actions**                                                                                                                                   |
+| Security (Gitleaks, Semgrep, Snyk, CodeQL) | `.github/workflows/security.yml`                                              | Secrets `SEMGREP_APP_TOKEN`, `SNYK_TOKEN`; aba **Security** para CodeQL                                                                                           |
+| Deploy Vercel                              | Integração nativa Vercel ↔ GitHub (Settings → Git; Root Directory `apps/web`) | Dashboard Vercel                                                                                                                                                  |
+| Fly sandbox-runner                         | `services/sandbox-runner/`, `deploy-services.yml`, `fly.toml` (scale-to-zero) | `GET /health` → **200** com `{"status":"ok",...}` (testado 2026-04-24)                                                                                            |
+| Neon + branches + secrets                  | Checklist Fase 0; connection strings não versionadas (só secrets)             | Branches `main`, `tcc-sad-ciberseguranca`, `honeypot-capture`, `threat-intel`; `NEON_DATABASE_URL_*` no GitHub; Fly secrets conforme apps — confirmado 2026-05-03 |
+| Domínio `api.*` → Fly                      | —                                                                             | DNS no provedor                                                                                                                                                   |
+| R2                                         | —                                                                             | Opcional até assets grandes (Passo 8); não bloqueia Fase 0                                                                                                        |
+| Branch protection                          | —                                                                             | **Settings → Branches** em `main`                                                                                                                                 |
 
 ### Itens (marque você no clone local ou no PR)
 
 - [x] CI rodando: lint, typecheck, test, build (workflow em `.github/workflows/ci.yml`)
 - [x] Security scan rodando: Gitleaks, Semgrep, Snyk, CodeQL (`.github/workflows/security.yml`)
 - [x] Vercel: integração nativa Vercel ↔ GitHub (Settings → Git; Root Directory `apps/web`)
-- [ ] Neon provisionado com branches `main`, `tcc-sad-ciberseguranca`, `honeypot-capture`, `threat-intel` (confirmar no console)
-- [ ] Connection strings do Neon em GitHub Secrets e Fly.io Secrets (confirmar nos dashboards)
+- [x] Neon provisionado com branches `main`, `tcc-sad-ciberseguranca`, `honeypot-capture`, `threat-intel` (confirmado 2026-05-03)
+- [x] Connection strings do Neon em GitHub Secrets e Fly.io Secrets (confirmado 2026-05-03)
 - [x] Fly.io com app `portfolio-sandbox-runner` deployado e scale-to-zero (`fly.toml`: `min_machines_running = 0`, checks em `/health`)
 - [x] `https://portfolio-sandbox-runner.fly.dev/health` respondendo (verificado 2026-04-24)
 - [ ] Domain mapping: `api.<seu-dominio>.com.br` apontando para o Fly app (só se você for usar hostname próprio)

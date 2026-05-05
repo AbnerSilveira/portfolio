@@ -39,15 +39,15 @@ Mapa completo de quem depende de quem no monorepo. Útil quando você precisa en
           │  (consumo seletivo)                 │
           └─────────────────────────────────────┘
 
-          ┌─────────────────────────────────────┐
-          │  services/threat-intel-aggregator   │
-          │                                     │
-          │  ◄── services/sandbox-runner        │
-          │  ◄── apps/projects/honeypot         │
-          │  ◄── apps/projects/waf              │
-          │  ◄── apps/projects/ids              │
-          │  ◄── apps/projects/threat-intel-dashboard
-          └─────────────────────────────────────┘
+          ┌───────────────────────────────────────────┐
+          │  services/threat-intel-aggregator         │
+          │                                           │
+          │  ◄── services/sandbox-runner              │
+          │  ◄── apps/projects/honeypot               │
+          │  ◄── apps/projects/waf                    │
+          │  ◄── apps/projects/ids                    │
+          │  ◄── apps/projects/threat-intel-dashboard │
+          └───────────────────────────────────────────┘
 ```
 
 ---
