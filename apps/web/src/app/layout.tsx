@@ -32,22 +32,6 @@ export const metadata: Metadata = {
     siteName: "Portfolio Cibersegurança",
   },
   robots: { index: true, follow: true },
-  icons: {
-    icon: [
-      {
-        url: "/favicon-light.svg",
-        type: "image/svg+xml",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/favicon-dark.svg",
-        type: "image/svg+xml",
-        media: "(prefers-color-scheme: dark)",
-      },
-      { url: "/favicon-dark.svg", type: "image/svg+xml" },
-    ],
-    apple: "/favicon-dark.svg",
-  },
 };
 
 export default function RootLayout({

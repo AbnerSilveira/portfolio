@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
+  <defs>
+    <style>
+      .bg {
+        fill: #ede8d6;
+      }
+      .lock {
+        stroke: #1b4d2e;
+      }
+      @media (prefers-color-scheme: dark) {
+        .bg {
+          fill: #14161f;
+        }
+        .lock {
+          stroke: #b8a3f0;
+        }
+      }
+    </style>
+  </defs>
+  <rect class="bg" width="32" height="32" rx="7" />
+  <g
+    class="lock"
+    fill="none"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M11.5 15.5V11a4.5 4.5 0 019 0v4.5" />
+    <rect x="9" y="15.5" width="14" height="11" rx="2" ry="2" />
+  </g>
+</svg>
