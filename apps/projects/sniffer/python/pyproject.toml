@@ -1,0 +1,19 @@
+[project]
+name = "sniffer-analyzer"
+version = "0.1.0"
+description = "PCAP analysis: port scan, ARP spoof, DNS tunneling, beaconing (Redes I)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "scapy>=2.5.0",
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.32.0",
+  "httpx>=0.27.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
