@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "@portfolio/config-tailwind/theme.css";
+
+/* Tokens mínimos (alinhar ao portfólio em docs/04-portfolio-publico.md) */
+:root {
+  --background: #f6ecd4;
+  --foreground: #2a2520;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0e1a;
+    --foreground: #e0e8ff;
+  }
+}

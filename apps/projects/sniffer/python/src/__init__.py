@@ -1,0 +1,1 @@
+"""Sniffer analyzer — Scapy + FastAPI."""

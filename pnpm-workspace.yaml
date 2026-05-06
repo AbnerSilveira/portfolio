@@ -1,6 +1,7 @@
 packages:
   - "apps/*"
   - "apps/projects/*"
+  - "apps/projects/sniffer/web"
   - "packages/*"
   - "services/*"
 
