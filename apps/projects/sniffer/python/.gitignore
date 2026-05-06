@@ -3,3 +3,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 *.db
+Python/
+_cache/
+bin/
+pythoncore-*/
