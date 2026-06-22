@@ -21,6 +21,10 @@
         "NEXT_PUBLIC_SANDBOX_URL"
       ]
     },
+    "@projects/sniffer-web#build": {
+      "dependsOn": ["web#build", "^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

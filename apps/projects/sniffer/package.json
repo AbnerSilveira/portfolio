@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "pnpm --filter @projects/sniffer-web build",
     "dev": "pnpm --filter @projects/sniffer-web dev",
     "lint": "pnpm --filter @projects/sniffer-web lint",
     "typecheck": "pnpm --filter @projects/sniffer-web typecheck",
