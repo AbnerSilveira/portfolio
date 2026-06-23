@@ -1,6 +1,6 @@
 "use client";
 
-import type { TypeCount } from "@/lib/alert-stats";
+import type { TypeCount } from "../lib/alert-stats";
 
 interface AlertSummaryCardsProps {
   total: number;

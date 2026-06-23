@@ -12,12 +12,12 @@ import {
   YAxis,
 } from "recharts";
 
-import type { TypeCount, TimelineBucket } from "@/lib/alert-stats";
+import type { TypeCount, TimelineBucket } from "../lib/alert-stats";
 import {
   SCAN_TYPE_COLORS,
   scanTypeLabel,
   type ScanType,
-} from "@/lib/alert-types";
+} from "../lib/alert-types";
 
 const SCAN_TYPES: ScanType[] = [
   "TCP_SYN_SCAN",

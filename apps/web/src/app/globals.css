@@ -5,12 +5,25 @@
 @source "../../../../packages/ui/src/**/*.tsx";
 /* Demos `interactive` servidas dentro do apps/web (ex.: rsa-visualizer) */
 @source "../../../../apps/projects/rsa-visualizer/src/**/*.tsx";
+@source "../../../../apps/projects/sniffer/web/src/**/*.tsx";
 
 @import "@portfolio/config-tailwind/theme.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+
+@utility sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
 
 /* Design system — ver docs/04-portfolio-publico.md (identidade visual e design polish) */
 

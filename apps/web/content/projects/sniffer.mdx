@@ -1,0 +1,55 @@
+---
+title: "Sniffer com Análise de Ameaças"
+description: "Sniffer de pacotes em Python que detecta port scanning, ARP spoofing, DNS tunneling e beaconing."
+subject: "Redes I"
+semester: "2023/2"
+impact: "high"
+category: "interactive"
+tags:
+  - python
+  - scapy
+  - network-security
+  - ids-lite
+  - fastapi
+date: 2023-11-10
+---
+
+## Sobre o projeto
+
+Sniffer acadêmico para **Redes I**: captura offline de PCAPs (sem raw sockets em produção) e quatro detectores heurísticos que emitem alertas quando padrões de ameaça aparecem no tráfego.
+
+A UI Next.js consome a API FastAPI via upload multipart; gráficos Recharts mostram distribuição por tipo, origem e bucket temporal.
+
+## Demo
+
+[Abrir a demo interativa](/projetos/sniffer/demo)
+
+A workbench é embebida no mesmo deploy do portfólio (`@projects/sniffer-web` consumido por `apps/web`). A API Python roda separadamente — localmente com `dev:api`, ou no Fly.io quando o backend estiver deployado.
+
+Use **PCAP de demonstração** na demo para ver um alerta de port scan (199 SYN para portas distintas). PCAPs “normais” (ARP, DNS, HTTP benigno) podem retornar zero alertas — isso é esperado.
+
+## Detectores
+
+| Detector   | Sinal                                                        |
+| ---------- | ------------------------------------------------------------ |
+| Port scan  | ≥50 portas TCP SYN distintas da mesma origem para um destino |
+| ARP spoof  | Mesmo IP com MACs diferentes na LAN                          |
+| DNS tunnel | Queries com labels longos / alta entropia                    |
+| Beaconing  | Conexões periódicas para o mesmo destino                     |
+
+## Destaques técnicos
+
+- Motor Python com Scapy + pytest (PCAPs sintéticos gerados nos testes)
+- Pipeline ordena alertas por timestamp
+- Upload limitado a 50 MB (`.pcap` / `.pcapng`)
+- CORS configurado para desenvolvimento local e origem do portfólio
+
+## Limitações
+
+- **Sem captura live** no deploy gerenciado — apenas análise de arquivos enviados
+- Heurísticas didáticas, não substituem IDS/IPS de produção
+- Vídeo walkthrough em breve (roadmap 2023/2)
+
+## Código
+
+Monorepo: `apps/projects/sniffer` (Python em `python/`, UI em `web/`).

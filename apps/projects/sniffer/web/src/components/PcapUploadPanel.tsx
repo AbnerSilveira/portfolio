@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 
-import { validatePcapFile } from "@/lib/sniffer-api";
+import { validatePcapFile } from "../lib/sniffer-api";
 
 interface PcapUploadPanelProps {
   disabled?: boolean;
@@ -38,7 +38,7 @@ export function PcapUploadPanel({
   return (
     <section
       aria-label="Upload de PCAP"
-      className={`rounded-xl border border-dashed p-8 transition-colors duration-200 ${
+      className={`relative rounded-xl border border-dashed p-8 transition-colors duration-200 sm:p-10 ${
         dragOver ? "border-primary bg-card" : "border-border bg-card/60"
       } ${disabled ? "pointer-events-none opacity-60" : ""}`}
       onDragEnter={(e) => {
@@ -60,15 +60,16 @@ export function PcapUploadPanel({
         ref={inputRef}
         type="file"
         accept=".pcap,.pcapng,application/vnd.tcpdump.pcap,application/octet-stream"
-        className="sr-only"
+        className="hidden"
         disabled={disabled}
         onChange={(e) => handleFile(e.target.files?.[0])}
       />
 
-      <div className="flex flex-col items-center gap-4 text-center">
-        <div className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-          POST /analyze
-        </div>
+      <p className="absolute right-4 top-4 font-mono text-xs uppercase tracking-widest text-muted-foreground sm:right-6 sm:top-6">
+        POST /analyze
+      </p>
+
+      <div className="flex flex-col items-center gap-5 pt-2 text-center">
         <p className="max-w-md text-sm text-muted-foreground">
           Arraste um arquivo <span className="font-mono">.pcap</span> ou{" "}
           <span className="font-mono">.pcapng</span> (máx. 50 MB). Análise

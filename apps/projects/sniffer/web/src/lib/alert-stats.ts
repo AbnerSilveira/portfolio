@@ -73,6 +73,7 @@ export function buildTimelineBuckets(alerts: SnifferAlert[]): TimelineBucket[] {
     );
     if (index < 0 || index >= buckets.length) continue;
     const bucket = buckets[index];
+    if (!bucket) continue;
 
     switch (alert.scan_type) {
       case "TCP_SYN_SCAN":

@@ -1,8 +1,8 @@
 "use client";
 
-import type { SnifferAlert } from "@/lib/alert-types";
-import { scanTypeLabel } from "@/lib/alert-types";
-import { formatTimestamp, timelineBase } from "@/lib/alert-stats";
+import type { SnifferAlert } from "../lib/alert-types";
+import { scanTypeLabel } from "../lib/alert-types";
+import { formatTimestamp, timelineBase } from "../lib/alert-stats";
 
 interface AlertTimelineProps {
   alerts: SnifferAlert[];

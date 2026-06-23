@@ -6,20 +6,27 @@ import { AlertCharts } from "./AlertCharts";
 import { AlertSummaryCards } from "./AlertSummaryCards";
 import { AlertTimeline } from "./AlertTimeline";
 import { PcapUploadPanel } from "./PcapUploadPanel";
-import type { SnifferAlert } from "@/lib/alert-types";
+import type { SnifferAlert } from "../lib/alert-types";
 import {
   buildTimelineBuckets,
   countBySource,
   countByType,
-} from "@/lib/alert-stats";
+} from "../lib/alert-stats";
 import {
   analyzePcap,
   checkApiHealth,
   fetchDemoPcap,
   type ApiHealthStatus,
-} from "@/lib/sniffer-api";
+} from "../lib/sniffer-api";
 
-export function SnifferWorkbench() {
+export interface SnifferWorkbenchProps {
+  /** Em `embedded`, o prompt `curl` fica oculto — a rota host já exibe `cd ./projetos/sniffer/demo`. */
+  variant?: "standalone" | "embedded";
+}
+
+export function SnifferWorkbench({
+  variant = "standalone",
+}: SnifferWorkbenchProps = {}) {
   const [apiStatus, setApiStatus] = useState<ApiHealthStatus>({
     state: "checking",
   });
@@ -84,17 +91,27 @@ export function SnifferWorkbench() {
     }
   }, [runAnalysis]);
 
+  const embedded = variant === "embedded";
+
   return (
-    <main className="min-w-0">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-14 sm:py-16">
+    <div className="min-w-0">
+      <div
+        className={
+          embedded
+            ? "mt-4 flex flex-col gap-8"
+            : "mx-auto flex max-w-6xl flex-col gap-8 px-6 py-14 sm:py-16"
+        }
+      >
         <header className="max-w-2xl">
-          <p className="mb-2 font-mono text-xs sm:text-sm">
-            <span className="text-primary">~/portfolio</span>
-            <span className="text-foreground"> $ </span>
-            <span className="text-foreground/90">
-              curl -F file=@capture.pcap http://127.0.0.1:8000/analyze
-            </span>
-          </p>
+          {!embedded ? (
+            <p className="mb-2 font-mono text-xs sm:text-sm">
+              <span className="text-primary">~/portfolio</span>
+              <span className="text-foreground"> $ </span>
+              <span className="text-foreground/90">
+                curl -F file=@capture.pcap http://127.0.0.1:8000/analyze
+              </span>
+            </p>
+          ) : null}
           <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
             Redes I · Análise offline
           </p>
@@ -168,14 +185,14 @@ export function SnifferWorkbench() {
           </>
         ) : null}
       </div>
-    </main>
+    </div>
   );
 }
 
 function ApiStatus({ status }: { status: ApiHealthStatus }) {
   if (status.state === "checking") {
     return (
-      <p className="mt-4 font-mono text-xs text-muted-foreground">
+      <p className="mt-3 font-mono text-xs text-muted-foreground">
         Verificando API…
       </p>
     );
@@ -184,7 +201,7 @@ function ApiStatus({ status }: { status: ApiHealthStatus }) {
   const online = status.state === "online";
 
   return (
-    <div className="mt-4 space-y-1">
+    <div className="mt-3 space-y-1">
       <p
         className={`inline-flex items-center gap-2 font-mono text-xs ${
           online ? "text-primary" : "text-destructive"
