@@ -86,6 +86,7 @@ def detect(packets: list[Packet]) -> list[Alert]:
                     dst_ip=str(getattr(ip, "dst", "")),
                     scan_type="DNS_TUNNELING",
                     message=f"label_len={label_len} entropy={ent:.2f} qname={qname}",
+                    timestamp=float(getattr(pkt, "time", 0.0)),
                 ),
             )
 

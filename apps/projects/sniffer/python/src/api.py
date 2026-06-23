@@ -8,11 +8,23 @@ import tempfile
 from typing import Any
 
 from fastapi import FastAPI, File, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 from scapy.all import rdpcap
 
 from src.pipeline import run_pipeline
 
 app = FastAPI(title="Sniffer Analyzer", version="0.1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3010",
+        "http://127.0.0.1:3010",
+    ],
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+)
 
 MAX_PCAP_BYTES = 50 * 1024 * 1024
 ALLOWED_EXTENSIONS = {".pcap", ".pcapng"}
@@ -63,6 +75,8 @@ async def analyze(file: UploadFile = File(...)) -> dict[str, Any]:
     return {
         "alerts": [a.__dict__ for a in alerts],
         "count": len(alerts),
+        "packet_count": len(packets),
+        "filename": file.filename,
     }
 
 

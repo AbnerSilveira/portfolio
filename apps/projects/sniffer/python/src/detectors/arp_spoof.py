@@ -22,6 +22,7 @@ def detect(packets: list[Packet]) -> list[Alert]:
     """
 
     ip_to_macs: dict[str, set[str]] = defaultdict(set)
+    last_seen: dict[str, float] = {}
 
     for pkt in packets:
         if not pkt.haslayer(ARP):
@@ -38,6 +39,7 @@ def detect(packets: list[Packet]) -> list[Alert]:
             continue
 
         ip_to_macs[psrc].add(hwsrc)
+        last_seen[psrc] = float(getattr(pkt, "time", 0.0))
 
     alerts: list[Alert] = []
     for ip, macs in ip_to_macs.items():
@@ -48,6 +50,7 @@ def detect(packets: list[Packet]) -> list[Alert]:
                     src_ip=ip,
                     scan_type="ARP_SPOOFING",
                     message=f"IP anunciado por múltiplos MACs: {sorted_macs}",
+                    timestamp=last_seen.get(ip, 0.0),
                 ),
             )
 

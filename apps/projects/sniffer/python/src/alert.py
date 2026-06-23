@@ -11,3 +11,4 @@ class Alert:
     scan_type: str
     dst_ip: str = ""
     message: str = ""
+    timestamp: float = 0.0

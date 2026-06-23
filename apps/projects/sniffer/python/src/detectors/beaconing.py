@@ -80,6 +80,7 @@ def detect(packets: list[Packet]) -> list[Alert]:
                     dst_ip=dst,
                     scan_type="BEACONING",
                     message=f"proto={proto} dport={dport} mean={mean:.2f}s cv={cv:.2f} events={len(times)}",
+                    timestamp=times[0],
                 ),
             )
 
