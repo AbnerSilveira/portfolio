@@ -1,0 +1,10 @@
+# Snyk policy — https://docs.snyk.io/manage-risk/policies/the-.snyk-file
+version: v1.25.1
+ignore:
+  'SNYK-JS-OPENTELEMETRYCORE-17373280':
+    - "*":
+        reason: >-
+          Transitive via contentlayer2 (build-time telemetry). Fix requires
+          @opentelemetry/core 2.x which breaks sdk-trace-base 1.x peer chain.
+        expires: 2026-09-01T00:00:00.000Z
+        created: 2026-06-23T00:00:00.000Z
