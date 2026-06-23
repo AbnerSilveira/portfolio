@@ -40,19 +40,12 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
       - run: pnpm install --frozen-lockfile
-      - run: pip install -r apps/projects/sniffer/python/requirements.txt
       - uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: >-
-            --all-projects
-            --severity-threshold=high
-            --exclude=apps/projects/sniffer/python
+          args: --all-projects --severity-threshold=high
 
   codeql:
     name: CodeQL
