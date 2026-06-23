@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "next dev --turbopack --port 3010",
-    "build": "next build --webpack",
+    "build:app": "next build --webpack",
     "start": "next start --port 3010",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
