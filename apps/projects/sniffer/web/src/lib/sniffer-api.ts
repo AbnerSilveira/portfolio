@@ -4,6 +4,8 @@ const MAX_PCAP_BYTES = 50 * 1024 * 1024;
 const ALLOWED_EXTENSIONS = [".pcap", ".pcapng"];
 
 const DEV_API_DEFAULT = "http://127.0.0.1:8000";
+/** URL pública do app Fly — não é secret; override via NEXT_PUBLIC_SNIFFER_API_URL se mudar. */
+const PROD_API_DEFAULT = "https://portfolio-sniffer-api.fly.dev";
 
 export function resolveApiBaseUrl(): string {
   const configured = process.env.NEXT_PUBLIC_SNIFFER_API_URL?.replace(
@@ -16,9 +18,7 @@ export function resolveApiBaseUrl(): string {
   if (process.env.NODE_ENV === "development") {
     return DEV_API_DEFAULT;
   }
-  throw new Error(
-    "NEXT_PUBLIC_SNIFFER_API_URL não configurada. Veja apps/projects/sniffer/web/.env.example",
-  );
+  return PROD_API_DEFAULT;
 }
 
 function apiBaseUrl(): string {
@@ -89,19 +89,7 @@ export async function fetchDemoPcap(): Promise<File> {
 }
 
 export async function checkApiHealth(): Promise<ApiHealthStatus> {
-  let url: string;
-  try {
-    url = resolveApiBaseUrl();
-  } catch (e) {
-    return {
-      state: "offline",
-      url: "(não configurada)",
-      reason:
-        e instanceof Error
-          ? e.message
-          : "NEXT_PUBLIC_SNIFFER_API_URL não configurada",
-    };
-  }
+  const url = resolveApiBaseUrl();
 
   try {
     const response = await fetch(`${url}/health`, {
