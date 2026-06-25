@@ -353,10 +353,13 @@ O `Dockerfile` do serviço assume **contexto na raiz do monorepo** (copia `pnpm-
 Para obter o `FLY_API_TOKEN`:
 
 ```bash
-flyctl tokens create deploy -x 999999h
+cd services/sandbox-runner
+fly tokens create deploy -a portfolio-sandbox-runner -x 999999h --name github-actions
 ```
 
-Inserir o token em GitHub Secrets como `FLY_API_TOKEN`.
+Cole **a linha inteira** (começa com `FlyV1 fm2_...`) em GitHub Secrets como `FLY_API_TOKEN` — sem aspas, sem quebra de linha.
+
+O workflow usa `--local-only` (build no runner do GitHub) porque **deploy tokens não acordam o remote builder** da Fly; `--remote-only` falha com `unauthorized` no CI mesmo com token válido.
 
 Com `workflow_dispatch` no `on:`, dá para disparar **Deploy Services (Fly.io)** manualmente em **Actions → Run workflow**, sem commit só para testar o token.
 
