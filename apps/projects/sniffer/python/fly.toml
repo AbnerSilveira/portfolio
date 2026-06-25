@@ -5,6 +5,7 @@ primary_region = "gru"
 
 [env]
   PORT = "8080"
+  SNIFFER_CORS_ORIGINS = "https://abnerportfolio.site,https://www.abnerportfolio.site"
 
 [http_service]
   internal_port = 8080
