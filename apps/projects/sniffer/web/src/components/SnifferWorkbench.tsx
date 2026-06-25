@@ -17,6 +17,7 @@ import {
   checkApiHealth,
   fetchDemoPcap,
   type ApiHealthStatus,
+  type DemoPcapId,
 } from "../lib/sniffer-api";
 
 export interface SnifferWorkbenchProps {
@@ -31,7 +32,7 @@ export function SnifferWorkbench({
     state: "checking",
   });
   const [loading, setLoading] = useState(false);
-  const [demoLoading, setDemoLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState<DemoPcapId | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filename, setFilename] = useState<string | undefined>();
   const [packetCount, setPacketCount] = useState<number | undefined>();
@@ -78,18 +79,21 @@ export function SnifferWorkbench({
     [runAnalysis],
   );
 
-  const handleDemoSelect = useCallback(async () => {
-    setDemoLoading(true);
-    setError(null);
-    try {
-      const file = await fetchDemoPcap();
-      await runAnalysis(file);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Falha ao carregar demo");
-    } finally {
-      setDemoLoading(false);
-    }
-  }, [runAnalysis]);
+  const handleDemoSelect = useCallback(
+    async (id: DemoPcapId) => {
+      setDemoLoading(id);
+      setError(null);
+      try {
+        const file = await fetchDemoPcap(id);
+        await runAnalysis(file);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Falha ao carregar demo");
+      } finally {
+        setDemoLoading(null);
+      }
+    },
+    [runAnalysis],
+  );
 
   const embedded = variant === "embedded";
 
@@ -127,9 +131,9 @@ export function SnifferWorkbench({
         </header>
 
         <PcapUploadPanel
-          disabled={loading || demoLoading}
+          disabled={loading || demoLoading !== null}
           onFileSelect={handleFileSelect}
-          onDemoSelect={() => void handleDemoSelect()}
+          onDemoSelect={(id) => void handleDemoSelect(id)}
           demoLoading={demoLoading}
         />
 
@@ -154,12 +158,11 @@ export function SnifferWorkbench({
         {analyzed && alerts.length === 0 && !error ? (
           <p className="rounded-lg border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
             Análise concluída: nenhum padrão de ameaça detectado neste PCAP. Os
-            detectores exigem tráfego específico (ex.: ≥50 portas SYN distintas,
-            ARP inconsistente, queries DNS longas, beaconing periódico). Use{" "}
+            detectores exigem tráfego específico. Experimente um dos{" "}
             <strong className="font-medium text-foreground">
-              PCAP de demonstração
+              PCAPs de demonstração
             </strong>{" "}
-            para ver um alerta de port scan.
+            acima (port scan, ARP, DNS tunnel ou beaconing).
           </p>
         ) : null}
 

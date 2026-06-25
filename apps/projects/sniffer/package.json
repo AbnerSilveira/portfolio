@@ -7,6 +7,7 @@
     "dev:api": "node scripts/run-api.mjs",
     "lint": "pnpm --filter @projects/sniffer-web lint",
     "typecheck": "pnpm --filter @projects/sniffer-web typecheck",
-    "test": "node scripts/run-pytest.mjs"
+    "test": "node scripts/run-pytest.mjs",
+    "generate:fixtures": "node scripts/generate-demo-pcaps.mjs"
   }
 }

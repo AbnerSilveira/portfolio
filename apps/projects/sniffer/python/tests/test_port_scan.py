@@ -1,18 +1,16 @@
 from pathlib import Path
 
 import pytest
-from scapy.all import IP, TCP, Ether, rdpcap, wrpcap
+from scapy.all import rdpcap
+
+from src.demo_pcaps import write_port_scan_demo
 
 pytest.importorskip("scapy")
 
 
 def generate_port_scan_pcap(tmp_path: Path) -> Path:
-    packets = [
-        Ether() / IP(src="10.0.0.5", dst="10.0.0.10") / TCP(dport=port, flags="S")
-        for port in range(1, 1001)
-    ]
     path = tmp_path / "scan.pcap"
-    wrpcap(str(path), packets)
+    write_port_scan_demo(path)
     return path
 
 
