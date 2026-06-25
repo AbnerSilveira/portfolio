@@ -1,0 +1,24 @@
+name: Deploy Sniffer API (Fly.io)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "apps/projects/sniffer/python/**"
+      - ".github/workflows/deploy-sniffer.yml"
+
+jobs:
+  deploy-sniffer-api:
+    name: Deploy sniffer API to Fly.io
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-sniffer-api
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      # Build no runner (Docker nativo) — deploy tokens não acordam remote builder Fly.
+      - run: flyctl deploy apps/projects/sniffer/python --local-only --depot=false --dockerfile apps/projects/sniffer/python/Dockerfile --config apps/projects/sniffer/python/fly.toml
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_SNIFFER_API_TOKEN }}
