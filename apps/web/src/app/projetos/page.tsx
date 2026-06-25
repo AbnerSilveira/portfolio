@@ -1,10 +1,10 @@
-import { allProjects } from "contentlayer/generated";
 import { ProjectCard } from "@portfolio/ui";
 
 import {
   PortfolioCmdLine,
   PortfolioPageMain,
 } from "@/components/portfolio/PortfolioPageFrame";
+import { getAllCatalogProjects } from "@/lib/projects";
 import { projectGridClassName } from "@/lib/project-grid";
 
 export const metadata = {
@@ -12,9 +12,7 @@ export const metadata = {
 };
 
 export default function ProjetosPage() {
-  const projects = [...allProjects].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
+  const projects = getAllCatalogProjects();
   const gridClass = projectGridClassName(projects.length);
 
   return (
@@ -25,29 +23,14 @@ export default function ProjetosPage() {
           Projetos
         </h1>
         <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-          Lista completa de projetos, com foco em segurança e engenharia de
-          software.
+          Catálogo completo do portfólio acadêmico — projetos publicados e em
+          desenvolvimento.
         </p>
       </header>
 
       <div className={gridClass}>
         {projects.map((project) => (
-          <ProjectCard
-            key={project.slug}
-            project={{
-              slug: project.slug,
-              title: project.title,
-              description: project.description,
-              subject: project.subject,
-              semester: project.semester,
-              impact: project.impact,
-              category: project.category,
-              tags: project.tags,
-              githubUrl: project.githubUrl,
-              demoUrl: project.demoUrl,
-              videoUrl: project.videoUrl,
-            }}
-          />
+          <ProjectCard key={project.slug} project={project} />
         ))}
       </div>
     </PortfolioPageMain>
