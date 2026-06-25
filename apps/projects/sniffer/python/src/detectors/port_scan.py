@@ -19,6 +19,7 @@ _MIN_DISTINCT_SYN_DPORTS = 50
 
 def detect(packets: list[Packet]) -> list[Alert]:
     syn_ports: dict[tuple[str, str], set[int]] = defaultdict(set)
+    last_seen: dict[tuple[str, str], float] = {}
 
     for pkt in packets:
         if not pkt.haslayer(TCP) or not pkt.haslayer(IP):
@@ -29,7 +30,9 @@ def detect(packets: list[Packet]) -> list[Alert]:
         syn = 0x02
         ack = 0x10
         if (flags & syn) and not (flags & ack):
-            syn_ports[(ip.src, ip.dst)].add(int(tcp.dport))
+            key = (ip.src, ip.dst)
+            syn_ports[key].add(int(tcp.dport))
+            last_seen[key] = float(getattr(pkt, "time", 0.0))
 
     alerts: list[Alert] = []
     for (src, dst), ports in syn_ports.items():
@@ -40,6 +43,7 @@ def detect(packets: list[Packet]) -> list[Alert]:
                     dst_ip=dst,
                     scan_type="TCP_SYN_SCAN",
                     message=f"{len(ports)} SYN distintos",
+                    timestamp=last_seen.get((src, dst), 0.0),
                 ),
             )
     return alerts

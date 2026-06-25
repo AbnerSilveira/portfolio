@@ -1,0 +1,15 @@
+# Snyk policy — https://docs.snyk.io/manage-risk/policies/the-.snyk-file
+version: v1.25.1
+ignore:
+  SNYK-JS-OPENTELEMETRYCORE-17373280:
+    - "*":
+        reason: >-
+          Transitive via contentlayer2 (build-time telemetry). Patch needs
+          @opentelemetry/core 2.x which breaks the sdk-trace-base 1.x chain.
+        expires: 2026-09-01T00:00:00.000Z
+  SNYK-JS-BRACEEXPANSION-16755174:
+    - "*":
+        reason: >-
+          Dev-only ESLint toolchain; brace-expansion 5.x override breaks
+          minimatch 3.x used by @eslint/config-array.
+        expires: 2026-09-01T00:00:00.000Z

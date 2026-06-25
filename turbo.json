@@ -18,7 +18,8 @@
         "CONTACT_FROM_EMAIL",
         "CONTACT_TO_EMAIL",
         "NEXT_PUBLIC_SITE_URL",
-        "NEXT_PUBLIC_SANDBOX_URL"
+        "NEXT_PUBLIC_SANDBOX_URL",
+        "NEXT_PUBLIC_SNIFFER_API_URL"
       ]
     },
     "dev": {

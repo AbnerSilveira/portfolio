@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     "@portfolio/ui",
     "@portfolio/types",
     "@projects/rsa-visualizer",
+    "@projects/sniffer-web",
   ],
 };
 

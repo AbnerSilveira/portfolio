@@ -1,4 +1,5 @@
 import { defineDocumentType, makeSource } from "contentlayer2/source-files";
+import remarkGfm from "remark-gfm";
 
 type RawDoc = { _raw: { flattenedPath: string } };
 
@@ -39,6 +40,9 @@ export const Project = defineDocumentType(() => ({
 const config: ReturnType<typeof makeSource> = makeSource({
   contentDirPath: "content",
   documentTypes: [Project],
+  mdx: {
+    remarkPlugins: [remarkGfm],
+  },
 });
 
 export default config;

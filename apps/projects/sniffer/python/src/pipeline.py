@@ -13,4 +13,4 @@ def run_pipeline(packets: list[Packet]) -> list[Alert]:
     alerts: list[Alert] = []
     for module in (port_scan, arp_spoof, dns_tunnel, beaconing):
         alerts.extend(module.detect(packets))
-    return sorted(alerts, key=lambda a: (a.src_ip, a.scan_type, a.dst_ip))
+    return sorted(alerts, key=lambda a: (a.timestamp, a.src_ip, a.scan_type, a.dst_ip))
