@@ -9,7 +9,7 @@ import { cn } from "../lib/cn";
 export interface ProjectCardProps {
   project: ProjectMetadata;
   className?: string;
-  /** Quando definido, substitui o link padrão `/projetos/[slug]` (ex.: placeholders → `/projetos`). */
+  /** Quando definido, substitui o link padrão `/projetos/[slug]`. */
   href?: string;
   "aria-label"?: string;
 }
@@ -30,13 +30,16 @@ const impactLabel: Record<ProjectMetadata["impact"], string> = {
 /** Espaço vertical igual entre blocos (cat · título+dot · descrição · tags). */
 const CARD_BLOCK_GAP = "gap-y-3 sm:gap-y-3.5";
 
-export function ProjectCard({
+const cardShellClass =
+  "project-card group flex h-full min-h-[168px] w-full flex-col rounded-lg border border-border bg-card p-3.5 sm:min-h-[180px] sm:p-4";
+
+function ProjectCardBody({
   project,
-  className,
-  href,
-  "aria-label": ariaLabel,
-}: ProjectCardProps) {
-  const to = href ?? `/projetos/${project.slug}`;
+  inDevelopment,
+}: {
+  project: ProjectMetadata;
+  inDevelopment: boolean;
+}) {
   const { ref: descRef, inView } = useInView<HTMLParagraphElement>({
     once: true,
     rootMargin: "0px 0px -12% 0px",
@@ -60,23 +63,22 @@ export function ProjectCard({
   ) as CSSProperties;
 
   return (
-    <a
-      href={to}
-      aria-label={ariaLabel}
-      className={cn(
-        "project-card group flex h-full min-h-[168px] w-full cursor-pointer flex-col rounded-lg border border-border bg-card p-3.5 no-underline sm:min-h-[180px] sm:p-4",
-        CARD_BLOCK_GAP,
-        className,
-      )}
-    >
+    <>
       <div
         className={cn("flex min-h-0 min-w-0 flex-1 flex-col", CARD_BLOCK_GAP)}
       >
-        <p className="font-mono text-[11px] leading-normal tracking-wide sm:text-xs sm:leading-normal">
-          <span className="text-primary">$</span>{" "}
-          <span className="text-primary">cat</span>{" "}
-          <span className="text-foreground/55">{project.slug}.md</span>
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="font-mono text-[11px] leading-normal tracking-wide sm:text-xs sm:leading-normal">
+            <span className="text-primary">$</span>{" "}
+            <span className="text-primary">cat</span>{" "}
+            <span className="text-foreground/55">{project.slug}.md</span>
+          </p>
+          {inDevelopment ? (
+            <span className="rounded border border-border bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+              em desenvolvimento
+            </span>
+          ) : null}
+        </div>
 
         <header className="flex items-start gap-2.5 text-sm font-semibold leading-snug sm:text-base">
           <span
@@ -87,7 +89,12 @@ export function ProjectCard({
               impactDotClass[project.impact],
             )}
           />
-          <h3 className="min-w-0 flex-1 tracking-tight text-foreground group-hover:text-primary">
+          <h3
+            className={cn(
+              "min-w-0 flex-1 tracking-tight text-foreground",
+              !inDevelopment && "group-hover:text-primary",
+            )}
+          >
             {project.title}
           </h3>
         </header>
@@ -114,6 +121,42 @@ export function ProjectCard({
           ))}
         </ul>
       ) : null}
+    </>
+  );
+}
+
+export function ProjectCard({
+  project,
+  className,
+  href,
+  "aria-label": ariaLabel,
+}: ProjectCardProps) {
+  const inDevelopment = project.status === "in-development";
+  const to = href ?? (inDevelopment ? undefined : `/projetos/${project.slug}`);
+
+  if (!to) {
+    return (
+      <div
+        aria-label={ariaLabel ?? `${project.title} — em desenvolvimento`}
+        className={cn(cardShellClass, CARD_BLOCK_GAP, className)}
+      >
+        <ProjectCardBody project={project} inDevelopment={inDevelopment} />
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={to}
+      aria-label={ariaLabel}
+      className={cn(
+        cardShellClass,
+        "cursor-pointer no-underline",
+        CARD_BLOCK_GAP,
+        className,
+      )}
+    >
+      <ProjectCardBody project={project} inDevelopment={inDevelopment} />
     </a>
   );
 }

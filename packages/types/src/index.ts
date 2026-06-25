@@ -5,6 +5,7 @@ export type ProjectCategory =
   | "video"
   | "documentation";
 export type ProjectImpact = "high" | "medium" | "low";
+export type ProjectStatus = "ready" | "in-development";
 
 export interface ProjectMetadata {
   slug: string;
@@ -15,6 +16,7 @@ export interface ProjectMetadata {
   impact: ProjectImpact;
   category: ProjectCategory;
   tags: string[];
+  status?: ProjectStatus;
   githubUrl?: string;
   demoUrl?: string;
   videoUrl?: string;
