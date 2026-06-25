@@ -4,16 +4,16 @@
 
 ## 1. O projeto
 
-| Campo     | Valor                                      |
-| --------- | ------------------------------------------ |
-| Matéria   | Redes de Computadores I                    |
-| Semestre  | 2023/2                                     |
-| Categoria | `video` (demo gravada + upload PCAP no ar) |
-| Impacto   | `high`                                     |
+| Campo     | Valor                                       |
+| --------- | ------------------------------------------- |
+| Matéria   | Redes de Computadores I                     |
+| Semestre  | 2023/2                                      |
+| Categoria | `interactive` (demo PCAP + UI no portfólio) |
+| Impacto   | `high`                                      |
 
 ### O que faz
 
-Analisador de tráfego a partir de **PCAP** (`.pcap` / `.pcapng`): detectores para **port scanning** (TCP SYN scan), **ARP spoofing**, **DNS tunneling** (entropia / tamanho) e **beaconing** (intervalos regulares). API **FastAPI** expõe análise e (futuro) WebSocket; UI **Next.js + Recharts** no pacote `@projects/sniffer-web`.
+Analisador de tráfego a partir de **PCAP** (`.pcap` / `.pcapng`): detectores para **port scanning** (TCP SYN scan), **ARP spoofing**, **DNS tunneling** (entropia / tamanho) e **beaconing** (intervalos regulares). API **FastAPI** expõe `/analyze` e `/health`; UI **Next.js + Recharts** no pacote `@projects/sniffer-web`.
 
 ### Por que existe
 
@@ -39,67 +39,66 @@ Demonstrar competências de **análise de pacotes**, **detecção de padrões de
 apps/projects/sniffer/
 ├── python/
 │   ├── src/
-│   │   ├── capture.py          # rdpcap / iteração (sem live no deploy)
-│   │   ├── pipeline.py         # orquestra detectores
-│   │   ├── api.py              # FastAPI
-│   │   ├── storage.py          # SQLite (stub / evolução)
-│   │   ├── alert.py            # modelo Alert
+│   │   ├── demo_pcaps.py       # geradores Scapy (demos + testes)
+│   │   ├── capture.py
+│   │   ├── pipeline.py
+│   │   ├── api.py
+│   │   ├── storage.py          # stub / evolução
+│   │   ├── alert.py
 │   │   └── detectors/
-│   │       ├── port_scan.py    # implementado (SYN flood de portas)
-│   │       ├── arp_spoof.py
-│   │       ├── dns_tunnel.py
-│   │       └── beaconing.py
-│   ├── tests/
-│   ├── requirements.txt
-│   └── pyproject.toml
+│   ├── scripts/generate_demo_pcaps.py
+│   └── tests/
 ├── web/                        # @projects/sniffer-web
-├── fixtures/                   # PCAPs sintéticos — ver README
-├── scripts/run-pytest.mjs      # pnpm test no pacote @projects/sniffer
-├── package.json                # orquestra web + pytest
+├── fixtures/                   # PCAPs sintéticos commitados
+├── scripts/
+│   ├── run-pytest.mjs
+│   └── generate-demo-pcaps.mjs
+├── package.json
 ├── README.md
 └── CLAUDE.md
 ```
 
-### Fluxo de dados (alto nível)
+### Fluxo de dados
 
-1. **Entrada:** arquivo PCAP (upload HTTP ou fixture de teste).
-2. **capture:** `rdpcap` → `list[Packet]`.
-3. **pipeline:** cada módulo em `detectors/*.py` retorna `list[Alert]`.
-4. **Saída API:** JSON agregado (e futuro: séries temporais para Recharts).
-5. **UI:** consome API (`NEXT_PUBLIC_SNIFFER_API_URL`), exibe timeline e gráficos.
+1. **Entrada:** upload HTTP ou PCAP de demo (`/fixtures/*-demo.pcap`).
+2. **pipeline:** detectores em paralelo → `list[Alert]`.
+3. **API:** JSON agregado (`POST /analyze`).
+4. **UI:** timeline + gráficos Recharts.
 
 ### Deploy
 
 - **Fly.io** app `portfolio-sniffer-api` — `python/fly.toml`, workflow `.github/workflows/deploy-sniffer.yml`.
-- Secret CI: `FLY_SNIFFER_API_TOKEN` (deploy token do app, separado do sandbox-runner).
-- CORS: regex `*.vercel.app` + `SNIFFER_CORS_ORIGINS` para domínio customizado.
-- **Vercel:** `NEXT_PUBLIC_SNIFFER_API_URL=https://portfolio-sniffer-api.fly.dev`.
-- Integração **sandbox-runner** conforme `docs/architecture/sandbox-security.md` (fase posterior).
+- Secret CI: `FLY_SNIFFER_API_TOKEN`.
+- CORS: `*.vercel.app`, `SNIFFER_CORS_ORIGINS` (ex.: `https://abnerportfolio.site`).
+- Produção: fallback em `sniffer-api.ts` → `https://portfolio-sniffer-api.fly.dev`.
 
 ---
 
 ## 4. Convenções
 
-- **Imports Python:** pacote top-level `src` com `pytest` `pythonpath = ["."]` em `python/pyproject.toml`.
-- **Testes:** TDD; PCAPs de teste sempre **sintéticos** (Scapy), nunca tráfego real.
-- **Limite PCAP:** 50 MB no upload (validar no `POST /analyze` quando existir).
+- PCAPs de demo/teste sempre **sintéticos** (`src/demo_pcaps.py` + `pnpm generate:fixtures`).
+- Limite upload: **50 MB** (`POST /analyze`).
 
 ---
 
-## 5. Próximos passos (roadmap Semana 1–2)
+## 5. Estado do roadmap (Semana 1–2)
 
-- [ ] Implementar `arp_spoof`, `dns_tunnel`, `beaconing`.
-- [ ] `POST /analyze` (multipart), limite de tamanho, validação de extensão.
-- [ ] `WebSocket /stream` (live local apenas se viável; produção = análise de arquivo).
-- [ ] UI: upload, timeline, gráficos Recharts.
-- [ ] SQLite: persistir runs e contagens por detector.
-- [ ] Dockerfile + Fly; entrada no sandbox-runner.
-- [ ] MDX em `apps/web/content/projects/sniffer.mdx` + vídeo.
+- [x] Detectores: port scan, ARP spoof, DNS tunnel, beaconing
+- [x] `POST /analyze` (multipart, limite, extensão)
+- [x] `WebSocket /stream` (stub — live não suportado no Fly)
+- [x] UI: upload, timeline, gráficos Recharts
+- [x] PCAPs demo (4 detectores) na workbench
+- [x] Dockerfile + deploy Fly.io
+- [x] MDX + demo embebida no portfólio (`/projetos/sniffer/demo`)
+- [ ] SQLite: persistir runs e contagens por detector
+- [ ] Integração sandbox-runner (fase posterior)
+- [ ] Vídeo demo YouTube (opcional)
 
 ---
 
 ## 6. Checklist de sessão
 
-- [ ] `pnpm --filter @projects/sniffer test` (pytest)
+- [ ] `pnpm --filter @projects/sniffer test`
 - [ ] `pnpm --filter @projects/sniffer-web lint typecheck build`
+- [ ] Se alterar PCAPs demo: `pnpm --filter @projects/sniffer generate:fixtures`
 - [ ] Atualizar este arquivo se mudar contrato dos detectores ou da API

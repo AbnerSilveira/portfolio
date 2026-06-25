@@ -26,7 +26,7 @@ A UI Next.js consome a API FastAPI via upload multipart; gráficos Recharts most
 
 A workbench é embebida no mesmo deploy do portfólio (`@projects/sniffer-web` consumido por `apps/web`). A API Python roda separadamente — localmente com `dev:api`, ou no Fly.io quando o backend estiver deployado.
 
-Use **PCAP de demonstração** na demo para ver um alerta de port scan (199 SYN para portas distintas). PCAPs “normais” (ARP, DNS, HTTP benigno) podem retornar zero alertas — isso é esperado.
+Use os **PCAPs de demonstração** na workbench (port scan, ARP spoofing, DNS tunneling, beaconing) — cada um dispara o detector correspondente. PCAPs genéricos podem retornar zero alertas; isso é esperado.
 
 ## Detectores
 

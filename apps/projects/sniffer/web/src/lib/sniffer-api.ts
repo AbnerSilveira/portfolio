@@ -75,15 +75,46 @@ export type ApiHealthStatus =
   | { state: "online"; url: string }
   | { state: "offline"; url: string; reason: string };
 
-export const DEMO_PCAP_PATH = "/fixtures/port-scan-demo.pcap";
+export type DemoPcapId = "port-scan" | "arp-spoof" | "dns-tunnel" | "beaconing";
 
-export async function fetchDemoPcap(): Promise<File> {
-  const response = await fetch(DEMO_PCAP_PATH);
+export const DEMO_PCAPS: Record<
+  DemoPcapId,
+  { label: string; path: string; filename: string }
+> = {
+  "port-scan": {
+    label: "Port scan",
+    path: "/fixtures/port-scan-demo.pcap",
+    filename: "port-scan-demo.pcap",
+  },
+  "arp-spoof": {
+    label: "ARP spoofing",
+    path: "/fixtures/arp-spoof-demo.pcap",
+    filename: "arp-spoof-demo.pcap",
+  },
+  "dns-tunnel": {
+    label: "DNS tunneling",
+    path: "/fixtures/dns-tunnel-demo.pcap",
+    filename: "dns-tunnel-demo.pcap",
+  },
+  beaconing: {
+    label: "Beaconing",
+    path: "/fixtures/beaconing-demo.pcap",
+    filename: "beaconing-demo.pcap",
+  },
+};
+
+export async function fetchDemoPcap(
+  id: DemoPcapId = "port-scan",
+): Promise<File> {
+  const demo = DEMO_PCAPS[id];
+  const response = await fetch(demo.path);
   if (!response.ok) {
-    throw new Error("Não foi possível carregar o PCAP de demonstração.");
+    throw new Error(
+      `Não foi possível carregar o PCAP de demonstração (${demo.label}).`,
+    );
   }
   const blob = await response.blob();
-  return new File([blob], "port-scan-demo.pcap", {
+  return new File([blob], demo.filename, {
     type: "application/vnd.tcpdump.pcap",
   });
 }
