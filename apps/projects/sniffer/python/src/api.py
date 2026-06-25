@@ -15,13 +15,29 @@ from src.pipeline import run_pipeline
 
 app = FastAPI(title="Sniffer Analyzer", version="0.1.0")
 
+_DEFAULT_CORS_ORIGINS = (
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3010",
+    "http://127.0.0.1:3010",
+)
+
+
+def _cors_origins() -> list[str]:
+    extra = os.getenv("SNIFFER_CORS_ORIGINS", "")
+    origins = list(_DEFAULT_CORS_ORIGINS)
+    if extra.strip():
+        origins.extend(part.strip() for part in extra.split(",") if part.strip())
+    return origins
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3010",
-        "http://127.0.0.1:3010",
-    ],
-    allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
+    allow_origins=_cors_origins(),
+    allow_origin_regex=(
+        r"https://([a-z0-9-]+\.)*vercel\.app"
+        r"|http://(localhost|127\.0\.0\.1)(:\d+)?"
+    ),
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )

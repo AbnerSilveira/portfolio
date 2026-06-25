@@ -68,11 +68,13 @@ apps/projects/sniffer/
 4. **Saída API:** JSON agregado (e futuro: séries temporais para Recharts).
 5. **UI:** consome API (`NEXT_PUBLIC_SNIFFER_API_URL`), exibe timeline e gráficos.
 
-### Deploy (futuro)
+### Deploy
 
-- **Fly.io** para o serviço Python (capabilities `NET_RAW` / `NET_ADMIN` só se necessário; análise é **offline** sobre arquivo — preferido).
-- **Sem captura live** no ambiente gerenciado: ver obstáculos no roadmap.
-- Integração **sandbox-runner** e **DemoFrame** conforme `docs/architecture/sandbox-security.md`.
+- **Fly.io** app `portfolio-sniffer-api` — `python/fly.toml`, workflow `.github/workflows/deploy-sniffer.yml`.
+- Secret CI: `FLY_SNIFFER_API_TOKEN` (deploy token do app, separado do sandbox-runner).
+- CORS: regex `*.vercel.app` + `SNIFFER_CORS_ORIGINS` para domínio customizado.
+- **Vercel:** `NEXT_PUBLIC_SNIFFER_API_URL=https://portfolio-sniffer-api.fly.dev`.
+- Integração **sandbox-runner** conforme `docs/architecture/sandbox-security.md` (fase posterior).
 
 ---
 
